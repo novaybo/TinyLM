@@ -33,12 +33,10 @@ class TinyLM(nn.Module):
             num_layers=num_layers,
             batch_first=True,
             dropout=dropout if num_layers > 1 else 0,
-            bidirectional=True
+            bidirectional=False
         )
 
-        self.attention = nn.Linear(hidden_dim * 2, 1)
-
-        self.fc1 = nn.Linear(hidden_dim * 2, hidden_dim)
+        self.fc1 = nn.Linear(hidden_dim, hidden_dim)
         self.dropout_layer = nn.Dropout(dropout)
         self.fc2 = nn.Linear(hidden_dim, vocab_size)
 
@@ -68,19 +66,7 @@ class TinyLM(nn.Module):
         embedded = self.embedding(x)
         lstm_out, hidden = self.lstm(embedded, hidden)
 
-        attention_weights = torch.softmax(
-            self.attention(lstm_out).squeeze(-1), dim=-1
-        )
-
-        context = torch.bmm(
-            attention_weights.unsqueeze(1), lstm_out
-        ).squeeze(1)
-
-        context = context.unsqueeze(1).expand(-1, seq_length, -1)
-
-        combined = lstm_out + context
-
-        out = F.relu(self.fc1(combined))
+        out = F.relu(self.fc1(lstm_out))
         out = self.dropout_layer(out)
         out = self.layer_norm(out)
         output = self.fc2(out)
@@ -92,8 +78,8 @@ class TinyLM(nn.Module):
         device = next(self.parameters()).device
 
         return (
-            torch.zeros(self.num_layers * 2, batch_size, self.hidden_dim).to(device),
-            torch.zeros(self.num_layers * 2, batch_size, self.hidden_dim).to(device)
+            torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device),
+            torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device)
         )
 
 
@@ -166,21 +152,32 @@ class Char_Dataset(torch.utils.data.Dataset):
 
         indices = encode_text(self.text, self.char2idx)
         sequences = []
-        i = 0
+        if len(indices) < self.min_length + 1:
+            return sequences
+        
+        max_start = max(0, len(indices) - self.min_length - 1)
+        num_samples = max(1, len(indices) // max(1, self.stride))
 
-        while i < len(indices) - self.min_length:
-            seq_len = random.randint(self.min_length, self.max_length)
-            seq_len = min(seq_len, len(indices) - i - 1)
-
-            if seq_len < self.min_length:
-                break
-
+        for _ in range(num_samples):
+            i = random.randint(0, max_start)
+            seq_len = random.randint(self.min_length, min(self.max_length, len(indices) - i - 1))
             seq = indices[i:i + seq_len]
             target = indices[i + 1:i + seq_len + 1]
 
-            sequences.append((seq, target))
-
-            i += random.randint(self.stride // 2, self.stride)
+            if len(seq) >= self.min_length:
+                sequences.append((seq, target))
+        
+        if len(sequences) < 1:
+            i = 0
+            while i < len(indices) - self.min_length:
+                seq_len = random.randint(self.min_length, self.max_length)
+                seq_len = min(seq_len, len(indices) - i - 1)
+                if seq_len < self.min_length:
+                    break
+                seq = indices[i:i + seq_len]
+                target = indices[i + 1:i + seq_len + 1]
+                sequences.append((seq, target))
+                i += random.randint(self.stride // 2, self.stride)
 
         return sequences
 
@@ -281,7 +278,7 @@ def calculate_perplexity(loss):
 
 
 def generate_text(model, start_text, char2idx, idx2char,
-                  device, length = 300, temprature = 0.7, top_k = 20):
+                  device, length = 300, temperature = 0.8, top_k = 50, top_p = 0.8, rep_penalty = 1.0):
 
     model.eval()
 
@@ -291,19 +288,34 @@ def generate_text(model, start_text, char2idx, idx2char,
     ).unsqueeze(0).to(device)
 
     hidden = None
+    recent_tokens = []
 
     with torch.no_grad():
 
         for _ in range(length):
             output, hidden = model(input_seq, hidden)
-            logits = output[:, -1, :] / temprature
+            logits = output[:, -1, :] / max(1e-8, temperature)
+
+            if rep_penalty != 1 and len(recent_tokens) > 0:
+                for t in set(recent_tokens[-64:]):
+                    logits[0, t] /= rep_penalty
 
             if top_k > 0:
                 top_k_val = min(top_k, logits.size(-1))
-                top_k_logits, top_k_indices = torch.topk(logits, top_k_val, dim=-1)
+                topk_vals, topk_idx = torch.topk(logits, top_k_val, dim=-1)
 
                 mask = torch.ones_like(logits, dtype=torch.bool)
-                mask.scatter_(-1, top_k_indices, False)
+                mask.scatter_(-1, topk_idx, False)
+                logits[mask] = -float('Inf')
+
+            if top_p and 0.0 < top_p < 1.0:
+                probs_temp = F.softmax(logits, dim=-1)
+                sorted_probs, sorted_indices = torch.sort(probs_temp, descending=True)
+                cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+
+                sorted_mask = cumulative_probs > top_p
+                sorted_mask[..., 0] = False
+                mask = torch.zeros_like(logits, dtype=torch.bool).scatter_(-1, sorted_indices, sorted_mask)
                 logits[mask] = -float('Inf')
 
             probs = F.softmax(logits, dim=-1)
@@ -313,6 +325,7 @@ def generate_text(model, start_text, char2idx, idx2char,
 
             char_idx = torch.multinomial(probs.squeeze(0), 1).item()
             generated.append(idx2char[char_idx])
+            recent_tokens.append(char_idx)
             input_seq = torch.tensor([[char_idx]]).to(device)
 
     return ''.join(generated)
@@ -333,6 +346,11 @@ def main():
     parser.add_argument('--dropout', type = float, default = 0.5, help = 'Dropout rate')
     parser.add_argument('--save_model', type = str, default = 'tinylm.pth', help = 'Path to save the trained model')
     parser.add_argument('--max_chars', type = int, default = 100000, help = 'Maximum number of characters to read from data file')
+    parser.add_argument('--temperature', type = float, default = 0.8, help = 'Temperature for text generation')
+    parser.add_argument('--top_k', type = int, default = 50, help = 'Top-K sampling for text generation')
+    parser.add_argument('--top_p', type = float, default = 0.8, help = 'Top-p (nucleus) sampling for text generation')
+    parser.add_argument('--repeat_penalty', type = float, default = 4.0, help = 'Repetition penalty for text generation')
+    parser.add_argument('--resume', type= str, default = None, help = 'Path to a checkpoint to resume training from')
 
     args = parser.parse_args()
 
@@ -450,7 +468,8 @@ def main():
 
         sample = generate_text(
             model, random.choice(prompts), char2idx, idx2char, device,
-            length = 100, temprature = 1.0, top_k = 50
+            length = 100, temperature = args.temperature, top_k = args.top_k,
+            top_p = args.top_p, rep_penalty = args.repeat_penalty
         )
 
         epoch_time = time.time() - start_time
@@ -538,14 +557,15 @@ def main():
         "async def fetch_data(url):",
     ]
 
-    tempratures = [0.5, 0.7, 1.0]
+    temperatures = [0.5, 0.7, 1.0]
 
     for starter in starters:
         print(f"\nStarter: '{starter}'")
-        for temp in tempratures:
+        for temp in temperatures:
             generated_text = generate_text(
                 model, starter, char2idx, idx2char, device,
-                length = 200, temprature = temp, top_k = 25
+                length = length, temperature = args.temperature, top_k = args.top_k,
+                top_p = args.top_p, rep_penalty = args.repeat_penalty
             )
             print(f"Temp {temp}: {generated_text}\n")
 
@@ -561,7 +581,8 @@ def main():
         print(f"\n{prompt}")
         generated = generate_text(
             model, prompt, char2idx, idx2char, device,
-            length=length, temprature=1.0, top_k=50
+            length=length, temperature=args.temperature, top_k=args.top_k,
+            top_p=args.top_p, rep_penalty=args.repeat_penalty
         )
         print("-" * 50)
         print(generated)
