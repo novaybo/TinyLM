@@ -281,11 +281,13 @@ def generate_text(model, start_text, char2idx, idx2char,
                   device, length = 300, temperature = 0.8, top_k = 50, top_p = 0.8, rep_penalty = 1.0):
 
     model.eval()
-
     generated = list(start_text)
-    input_seq = torch.tensor(
-        encode_text(start_text, char2idx)
-    ).unsqueeze(0).to(device)
+    
+    model_device = next(model.parameters()).device
+    device = device if device else model_device
+
+    input_indices = encode_text(start_text, char2idx)
+    input_seq = torch.tensor([input_indices], dtype=torch.long).to(device)
 
     hidden = None
     recent_tokens = []
@@ -326,6 +328,7 @@ def generate_text(model, start_text, char2idx, idx2char,
             char_idx = torch.multinomial(probs.squeeze(0), 1).item()
             generated.append(idx2char[char_idx])
             recent_tokens.append(char_idx)
+            
             input_seq = torch.tensor([[char_idx]]).to(device)
 
     return ''.join(generated)
@@ -335,17 +338,17 @@ def main():
 
     parser = argparse.ArgumentParser(description = 'TinyLM training script')
     parser.add_argument('--data', nargs = '+', default = ['/home/dante/VSCode/.virtual_env/projects/TinyLM/sample.txt'], help = 'Path to training data')
-    parser.add_argument('--epochs', type = int, default = 100, help = 'Number of training epochs')
-    parser.add_argument('--batch_size', type = int, default = 64, help = 'Batch size for training')
-    parser.add_argument('--min_length', type = int, default = 30, help = 'Minimum sequence length')
-    parser.add_argument('--max_length', type = int, default = 150, help = 'Maximum sequence length')
-    parser.add_argument('--embedding_dim', type = int, default = 128, help = 'Dimension of character embeddings')
-    parser.add_argument('--hidden_dim', type = int, default = 256, help = 'Dimension of LSTM hidden states')
+    parser.add_argument('--epochs', type = int, default = 200, help = 'Number of training epochs')
+    parser.add_argument('--batch_size', type = int, default = 32, help = 'Batch size for training')
+    parser.add_argument('--min_length', type = int, default = 50, help = 'Minimum sequence length')
+    parser.add_argument('--max_length', type = int, default = 200, help = 'Maximum sequence length')
+    parser.add_argument('--embedding_dim', type = int, default = 256, help = 'Dimension of character embeddings')
+    parser.add_argument('--hidden_dim', type = int, default = 512, help = 'Dimension of LSTM hidden states')
     parser.add_argument('--num_layers', type = int, default = 2, help = 'Number of LSTM layers')
-    parser.add_argument('--learning_rate', type = float, default = 0.0001, help = 'Learning rate for optimizer')
+    parser.add_argument('--learning_rate', type = float, default = 0.001, help = 'Learning rate for optimizer')
     parser.add_argument('--dropout', type = float, default = 0.5, help = 'Dropout rate')
-    parser.add_argument('--save_model', type = str, default = 'tinylm.pth', help = 'Path to save the trained model')
-    parser.add_argument('--max_chars', type = int, default = 100000, help = 'Maximum number of characters to read from data file')
+    parser.add_argument('--save_model', type = str, default = '/home/dante/VSCode/.virtual_env/projects/TinyLM/tinylm.pth', help = 'Path to save the trained model')
+    parser.add_argument('--max_chars', type = int, default = 5000000, help = 'Maximum number of characters to read from data file')
     parser.add_argument('--temperature', type = float, default = 0.8, help = 'Temperature for text generation')
     parser.add_argument('--top_k', type = int, default = 50, help = 'Top-K sampling for text generation')
     parser.add_argument('--top_p', type = float, default = 0.8, help = 'Top-p (nucleus) sampling for text generation')
@@ -357,27 +360,64 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f'Using device: {device}')
 
-    print(f"Loading data from {args.data}...")
-    text = load_text_data(args.data, args.max_chars)
-    print(f"Loaded {len(text)} characters.")
-    print(f"Sample text: {text[:100]}...")
+    start_epoch = 0
+    train_losses = []
+    val_losses = []
+    perplexities = []
+    best_val_loss = float('inf')
+    char2idx = None
+    idx2char = None
 
-    char2idx, idx2char, chars = create_vocab(text)
-    vocab_size = len(chars)
+    if args.resume and os.path.exists(args.resume):
+        print(f"Loading checkpoint from {args.resume}")
+        checkpoint = torch.load(args.resume, map_location=device)
+
+        char2idx = checkpoint['char2idx']
+        idx2char = checkpoint['idx2char']
+        vocab_size = checkpoint['vocab_size']
+
+        print(f"Loading data from {args.data}...")
+        text = load_text_data(args.data, args.max_chars)
+        print(f"Loaded {len(text)} characters from data.")
+
+        model = TinyLM(
+            vocab_size = vocab_size,
+            embedding_dim = checkpoint.get('embedding_dim', args.embedding_dim),
+            hidden_dim = checkpoint.get('hidden_dim', args.hidden_dim),
+            num_layers = checkpoint.get('num_layers', args.num_layers),
+            dropout = checkpoint.get('dropout', args.dropout),
+            pad_idx=char2idx[PAD_TOKEN]
+        ).to(device)
+
+        model.load_state_dict(checkpoint['model_state_dict'])
+
+        train_losses = checkpoint.get('train_losses', [])
+        val_losses = checkpoint.get('val_losses', [])
+        perplexities = checkpoint.get('perplexities', [])
+        best_val_loss = checkpoint.get('best_val_loss', float('inf'))
+        start_epoch = checkpoint.get('epoch', 0) + 1
+
+        print(f"Resumed training from epoch {start_epoch}")
+        print(f"Previous best validation loss: {best_val_loss:.4f}")
+
+    else:
+        print(f"Loading data from {args.data}...")
+        text = load_text_data(args.data, args.max_chars)
+        print(f"Loaded {len(text)} characters from data.")
+
+        char2idx, idx2char, _ = create_vocab(text)
+        vocab_size = len(char2idx)
+
+        model = TinyLM(
+            vocab_size = vocab_size,
+            embedding_dim = args.embedding_dim,
+            hidden_dim = args.hidden_dim,
+            num_layers = args.num_layers,
+            dropout = args.dropout,
+            pad_idx=char2idx[PAD_TOKEN]
+        ).to(device)
+
     print(f"Vocabulary size: {vocab_size}")
-    print(f"Characters: {''.join(chars[:50])}")
-
-    char_counts = Counter(text)
-    print(f"\nTop 20 characters by frequency:")
-    for char, count in char_counts.most_common(20):
-        if char == '\n':
-            print(f"  '\\n': {count:,}")
-        elif char == '\t':
-            print(f"  '\\t': {count:,}")
-        elif char == ' ':
-            print(f"  ' ': {count:,}")
-        else:
-            print(f"  '{char}': {count:,}")
 
     print(f"\nCreating dataset...")
     dataset = Char_Dataset(
@@ -408,38 +448,29 @@ def main():
         num_workers = 0
     )
 
-    print(f"\nInitializing model...")
-    model = TinyLM(
-        vocab_size = vocab_size,
-        embedding_dim = args.embedding_dim,
-        hidden_dim = args.hidden_dim,
-        num_layers = args.num_layers,
-        dropout = args.dropout,
-        pad_idx=char2idx[PAD_TOKEN]
-    ).to(device)
+    pad_idx = char2idx[PAD_TOKEN]
+    criterion = nn.CrossEntropyLoss(ignore_index = pad_idx)
+    optimizer = torch.optim.Adam(model.parameters(), lr = args.learning_rate, weight_decay = 0.0001)
+
+    if args.resume and os.path.exists(args.resume) and 'optimizer_state_dict' in checkpoint:
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        print("Loaded optimizer state from checkpoint.")
+
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode = 'min', factor = 0.5, patience = 5
+    )
 
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"Total parameters: {total_params}")
     print(f"Trainable parameters: {trainable_params}")
 
-    pad_idx = char2idx[PAD_TOKEN]
-    criterion = nn.CrossEntropyLoss(ignore_index = pad_idx)
-    optimizer = torch.optim.Adam(model.parameters(), lr = args.learning_rate, weight_decay = 0.0001)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode = 'min', factor = 0.5, patience = 5
-    )
-
     print(f"\nStarting training for {args.epochs} epochs...\n")
-    train_losses = []
-    val_losses = []
-    perplexities = []
-    best_val_loss = float('inf')
 
-    patience = 10
+    patience = 20
     patience_counter = 0
 
-    for epoch in range(args.epochs):
+    for epoch in range(start_epoch, args.epochs):
         print(f"Epoch {epoch + 1}/{args.epochs}")
         print("-" * 50)
 
@@ -485,6 +516,10 @@ def main():
                 'optimizer_state_dict': optimizer.state_dict(),
                 'train_loss': train_loss,
                 'val_loss': val_loss,
+                'train_losses': train_losses,
+                'val_losses': val_losses,
+                'perplexities': perplexities,
+                'best_val_loss': best_val_loss,
                 'char2idx': char2idx,
                 'idx2char': idx2char,
                 'vocab_size': vocab_size,
@@ -538,7 +573,7 @@ def main():
     axes[1, 1].grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('coding_lm_training.png', dpi=300, bbox_inches='tight')
+    plt.savefig('/home/dante/VSCode/.virtual_env/projects/TinyLM/coding_lm_training.png', dpi=300, bbox_inches='tight')
     plt.show()
 
     print("\n" + "=" * 60)
@@ -564,7 +599,7 @@ def main():
         for temp in temperatures:
             generated_text = generate_text(
                 model, starter, char2idx, idx2char, device,
-                length = length, temperature = args.temperature, top_k = args.top_k,
+                length = 100, temperature = args.temperature, top_k = args.top_k,
                 top_p = args.top_p, rep_penalty = args.repeat_penalty
             )
             print(f"Temp {temp}: {generated_text}\n")
@@ -581,7 +616,7 @@ def main():
         print(f"\n{prompt}")
         generated = generate_text(
             model, prompt, char2idx, idx2char, device,
-            length=length, temperature=args.temperature, top_k=args.top_k,
+            length=100, temperature=args.temperature, top_k=args.top_k,
             top_p=args.top_p, rep_penalty=args.repeat_penalty
         )
         print("-" * 50)
