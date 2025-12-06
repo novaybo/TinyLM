@@ -11,17 +11,21 @@ import os
 import math
 
 
+PAD_TOKEN = '<PAD>'
+UNK_TOKEN = '<UNK>'
+
+
 
 class TinyLM(nn.Module):
 
-    def __init__(self, vocab_size = 5000, embedding_dim = 256, hidden_dim = 512, num_layers = 3, dropout = 0.2):
+    def __init__(self, vocab_size = 5000, embedding_dim = 128, hidden_dim = 256, num_layers = 2, dropout = 0.5, pad_idx = 0):
         super().__init__()
         self.vocab_size = vocab_size
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
         self.dropout = dropout
         
-        self.embedding = nn.Embedding(vocab_size, embedding_dim)
+        self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx = pad_idx)
 
         self.lstm = nn.LSTM(
             embedding_dim,
@@ -77,7 +81,7 @@ class TinyLM(nn.Module):
         combined = lstm_out + context
 
         out = F.relu(self.fc1(combined))
-        out = self.dropout(out)
+        out = self.dropout_layer(out)
         out = self.layer_norm(out)
         output = self.fc2(out)
 
@@ -101,12 +105,19 @@ def create_vocab(text):
     sorted_chars = sorted(char_counts.items(), key=lambda x: -x[1])
     chars = [ch for ch, _ in sorted_chars]
 
+    if PAD_TOKEN in chars:
+        chars.remove(PAD_TOKEN)
+    if UNK_TOKEN in chars:
+        chars.remove(UNK_TOKEN)
+
+    chars = [PAD_TOKEN, UNK_TOKEN] + chars
+
     char2idx = {ch: i for i, ch in enumerate(chars)}
     idx2char = {i: ch for i, ch in enumerate(chars)}
 
     return char2idx, idx2char, chars
 
-def encode_text(text, char2idx, unknown_char = '�'):
+def encode_text(text, char2idx, unknown_char = UNK_TOKEN):
 
     indices = []
 
@@ -114,7 +125,7 @@ def encode_text(text, char2idx, unknown_char = '�'):
         if ch in char2idx:
             indices.append(char2idx[ch])
         else:
-            indices.append(char2idx.get(unknown_char, 0))
+            indices.append(char2idx.get(unknown_char, char2idx[PAD_TOKEN]))
     return indices
 
 def decode_text(indices, idx2char):
@@ -155,6 +166,7 @@ class Char_Dataset(torch.utils.data.Dataset):
 
         indices = encode_text(self.text, self.char2idx)
         sequences = []
+        i = 0
 
         while i < len(indices) - self.min_length:
             seq_len = random.randint(self.min_length, self.max_length)
@@ -163,7 +175,7 @@ class Char_Dataset(torch.utils.data.Dataset):
             if seq_len < self.min_length:
                 break
 
-            seq = indices[i: + seq_len]
+            seq = indices[i:i + seq_len]
             target = indices[i + 1:i + seq_len + 1]
 
             sequences.append((seq, target))
@@ -189,10 +201,17 @@ def collate_func(batch):
     padded_inputs = []
     padded_targets = []
 
+    pad_idx = 0
+
+    try:
+        pad_idx = char2idx.get(PAD_TOKEN, 0)
+    except NameError:
+        pad_idx = 0
+
     for input, target in zip(inputs, targets):
         pad_len = max_len - len(input)
-        padded_inputs.append(F.pad(input, (0, pad_len), value = 0))
-        padded_targets.append(F.pad(target, (0, pad_len), value = 0))
+        padded_inputs.append(F.pad(input, (0, pad_len), value = pad_idx))
+        padded_targets.append(F.pad(target, (0, pad_len), value = pad_idx))
 
     return torch.stack(padded_inputs), torch.stack(padded_targets)
 
@@ -202,7 +221,6 @@ def train_epoch(model, dataloader, criterion, optimizer, device,
 
     model.train()
     total_loss = 0
-    total_chars = 0
 
     for batch_idx, (inputs, targets) in enumerate(dataloader):
         inputs, targets = inputs.to(device), targets.to(device)
@@ -216,24 +234,18 @@ def train_epoch(model, dataloader, criterion, optimizer, device,
         outputs = outputs.view(-1, outputs.size(-1))
         targets = targets.view(-1)
         
-        mask = targets != 0
-        outputs = outputs[mask]
-        targets = targets[mask]
+        loss = criterion(outputs, targets)
+        loss.backward()
 
-        if len(targets) > 0:
-            loss = criterion(outputs, targets)
-            loss.bacward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
+        optimizer.step()
 
-            torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
-            optimizer.step()
-
-            total_loss += loss.item()
-            total_chars += len(targets)
+        total_loss += loss.item()
 
         if batch_idx % print_every == 0:
             avg_loss = total_loss / max(1, (batch_idx + 1))
             print(f"Batch {batch_idx}/{len(dataloader)},"
-                  f"Loss: {loss.item() if 'loss' in locals else 0:.4f},"
+                  f"Loss: {loss.item() if 'loss' in locals() else 0:.4f},"
                   f"Avg Loss: {avg_loss:.4f}")
 
     return total_loss / len(dataloader) if len(dataloader) > 0 else 0
@@ -242,7 +254,6 @@ def validate(model, dataloader, criterion, device):
 
     model.eval()
     total_loss = 0
-    total_chars = 0
 
     with torch.no_grad():
         for inputs, targets in dataloader:
@@ -255,16 +266,10 @@ def validate(model, dataloader, criterion, device):
             outputs = outputs.view(-1, outputs.size(-1))
             targets = targets.view(-1)
             
-            mask = targets != 0
-            outputs = outputs[mask]
-            targets = targets[mask]
+            loss = criterion(outputs, targets)
+            total_loss += loss.item()
 
-            if len(targets) > 0:
-                loss = criterion(outputs, targets)
-                total_loss += loss.item()
-                total_chars += len(targets)
-
-    return total_loss / max(1, total_chars) if total_chars > 0 else 0
+    return total_loss / len(dataloader) if len(dataloader) > 0 else 0
 
 
 def calculate_perplexity(loss):
@@ -294,20 +299,21 @@ def generate_text(model, start_text, char2idx, idx2char,
             logits = output[:, -1, :] / temprature
 
             if top_k > 0:
-                to_k_val = min(top_k, logits.size(-1))
-                indices_to_remove = logits < torch.topk(logits, top_k_val)[0][..., -1, None]
-                logits[indices_to_remove] = -float('Inf')
+                top_k_val = min(top_k, logits.size(-1))
+                top_k_logits, top_k_indices = torch.topk(logits, top_k_val, dim=-1)
 
-            probs = F.softmax(logits, dim=0)
+                mask = torch.ones_like(logits, dtype=torch.bool)
+                mask.scatter_(-1, top_k_indices, False)
+                logits[mask] = -float('Inf')
 
-            char_idx = torch.multinomial(probs, 1).item()
+            probs = F.softmax(logits, dim=-1)
+
+            if torch.any(torch.isnan(probs)) or torch.any(torch.isinf(probs)):
+                probs = torch.ones_like(probs) / probs.size(-1)
+
+            char_idx = torch.multinomial(probs.squeeze(0), 1).item()
             generated.append(idx2char[char_idx])
             input_seq = torch.tensor([[char_idx]]).to(device)
-
-            last_chars = ''.join(generated[-20:])
-            if last_chars.count('(') > last_chars.count(')'):
-                if idx2char[char_idx] == ')':
-                    pass
 
     return ''.join(generated)
 
@@ -315,16 +321,16 @@ def generate_text(model, start_text, char2idx, idx2char,
 def main():
 
     parser = argparse.ArgumentParser(description = 'TinyLM training script')
-    parser.add_argument('--data', nargs = '+', default = 'sample.txt', help = 'Path to training data')
+    parser.add_argument('--data', nargs = '+', default = ['/home/dante/VSCode/.virtual_env/projects/TinyLM/sample.txt'], help = 'Path to training data')
     parser.add_argument('--epochs', type = int, default = 100, help = 'Number of training epochs')
-    parser.add_argument('--batch_size', type = int, default = 32, help = 'Batch size for training')
+    parser.add_argument('--batch_size', type = int, default = 64, help = 'Batch size for training')
     parser.add_argument('--min_length', type = int, default = 30, help = 'Minimum sequence length')
     parser.add_argument('--max_length', type = int, default = 150, help = 'Maximum sequence length')
-    parser.add_argument('--embedding_dim', type = int, default = 256, help = 'Dimension of character embeddings')
-    parser.add_argument('--hidden_dim', type = int, default = 512, help = 'Dimension of LSTM hidden states')
-    parser.add_argument('--num_layers', type = int, default = 3, help = 'Number of LSTM layers')
-    parser.add_argument('--learning_rate', type = float, default = 0.001, help = 'Learning rate for optimizer')
-    parser.add_argument('--dropout', type = float, default = 0.2, help = 'Dropout rate')
+    parser.add_argument('--embedding_dim', type = int, default = 128, help = 'Dimension of character embeddings')
+    parser.add_argument('--hidden_dim', type = int, default = 256, help = 'Dimension of LSTM hidden states')
+    parser.add_argument('--num_layers', type = int, default = 2, help = 'Number of LSTM layers')
+    parser.add_argument('--learning_rate', type = float, default = 0.0001, help = 'Learning rate for optimizer')
+    parser.add_argument('--dropout', type = float, default = 0.5, help = 'Dropout rate')
     parser.add_argument('--save_model', type = str, default = 'tinylm.pth', help = 'Path to save the trained model')
     parser.add_argument('--max_chars', type = int, default = 100000, help = 'Maximum number of characters to read from data file')
 
@@ -390,7 +396,8 @@ def main():
         embedding_dim = args.embedding_dim,
         hidden_dim = args.hidden_dim,
         num_layers = args.num_layers,
-        dropout = args.dropout
+        dropout = args.dropout,
+        pad_idx=char2idx[PAD_TOKEN]
     ).to(device)
 
     total_params = sum(p.numel() for p in model.parameters())
@@ -398,10 +405,11 @@ def main():
     print(f"Total parameters: {total_params}")
     print(f"Trainable parameters: {trainable_params}")
 
-    criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr = args.learning_rate)
+    pad_idx = char2idx[PAD_TOKEN]
+    criterion = nn.CrossEntropyLoss(ignore_index = pad_idx)
+    optimizer = torch.optim.Adam(model.parameters(), lr = args.learning_rate, weight_decay = 0.0001)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode = 'min', factor = 0.5, patience = 5, verbose = True
+        optimizer, mode = 'min', factor = 0.5, patience = 5
     )
 
     print(f"\nStarting training for {args.epochs} epochs...\n")
@@ -430,19 +438,19 @@ def main():
         scheduler.step(val_loss)
 
         prompts = [
-            "def ",
-            "import ",
-            "class ",
-            "for i in ",
-            "if __name__ == '__main__':",
-            "if x > ",
-            "print(",
-            "# This function"
+            "def   ",
+            "import   ",
+            "class   ",
+            "for i in   ",
+            "if __name__ == '__main__':   ",
+            "if x >   ",
+            "print(   ",
+            "# This function   "
         ]
 
         sample = generate_text(
             model, random.choice(prompts), char2idx, idx2char, device,
-            length = 100, temprature = 0.7, top_k = 20
+            length = 100, temprature = 1.0, top_k = 50
         )
 
         epoch_time = time.time() - start_time
@@ -526,7 +534,7 @@ def main():
         "if user_input == '':",
         "# This is a function to sort",
         "import pandas as pd",
-        "def validate_email(email):"
+        "def validate_email(email):",
         "async def fetch_data(url):",
     ]
 
@@ -553,7 +561,7 @@ def main():
         print(f"\n{prompt}")
         generated = generate_text(
             model, prompt, char2idx, idx2char, device,
-            length=length, temperature=0.7, top_k=20
+            length=length, temprature=1.0, top_k=50
         )
         print("-" * 50)
         print(generated)

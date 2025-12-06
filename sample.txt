@@ -1,0 +1,4109 @@
+# Python Code Examples
+
+def fibonacci(n):
+    """Return the nth Fibonacci number."""
+    if n <= 1:
+        return n
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+
+def factorial(n):
+    """Calculate factorial recursively."""
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
+
+def is_prime(num):
+    """Check if a number is prime."""
+    if num <= 1:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+def binary_search(arr, target):
+    """Binary search implementation."""
+    low, high = 0, len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+def bubble_sort(arr):
+    """Bubble sort implementation."""
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+def quick_sort(arr):
+    """Quick sort implementation."""
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+
+class Rectangle:
+    """A simple rectangle class."""
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+    
+    def area(self):
+        return self.width * self.height
+    
+    def perimeter(self):
+        return 2 * (self.width + self.height)
+    
+    def __str__(self):
+        return f"Rectangle({self.width}x{self.height})"
+    
+    def __repr__(self):
+        return f"Rectangle(width={self.width}, height={self.height})"
+
+class Stack:
+    """Stack implementation using list."""
+    def __init__(self):
+        self.items = []
+    
+    def push(self, item):
+        self.items.append(item)
+    
+    def pop(self):
+        if not self.is_empty():
+            return self.items.pop()
+        return None
+    
+    def peek(self):
+        if not self.is_empty():
+            return self.items[-1]
+        return None
+    
+    def is_empty(self):
+        return len(self.items) == 0
+    
+    def size(self):
+        return len(self.items)
+
+class Queue:
+    """Queue implementation using deque."""
+    from collections import deque
+    
+    def __init__(self):
+        self.items = deque()
+    
+    def enqueue(self, item):
+        self.items.append(item)
+    
+    def dequeue(self):
+        if not self.is_empty():
+            return self.items.popleft()
+        return None
+    
+    def is_empty(self):
+        return len(self.items) == 0
+    
+    def size(self):
+        return len(self.items)
+
+def read_file(filename):
+    """Read a file safely."""
+    try:
+        with open(filename, 'r') as file:
+            return file.read()
+    except FileNotFoundError:
+        print(f"File {filename} not found!")
+        return None
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        return None
+
+def write_file(filename, content):
+    """Write content to a file."""
+    try:
+        with open(filename, 'w') as file:
+            file.write(content)
+        return True
+    except Exception as e:
+        print(f"Error writing file: {e}")
+        return False
+
+def count_words(text):
+    """Count words in a string."""
+    words = text.split()
+    return len(words)
+
+def find_max(numbers):
+    """Find maximum value in a list."""
+    if not numbers:
+        return None
+    max_val = numbers[0]
+    for num in numbers[1:]:
+        if num > max_val:
+            max_val = num
+    return max_val
+
+def find_min(numbers):
+    """Find minimum value in a list."""
+    if not numbers:
+        return None
+    min_val = numbers[0]
+    for num in numbers[1:]:
+        if num < min_val:
+            min_val = num
+    return min_val
+
+def calculate_average(numbers):
+    """Calculate average of numbers."""
+    if not numbers:
+        return None
+    return sum(numbers) / len(numbers)
+
+def reverse_string(s):
+    """Reverse a string."""
+    return s[::-1]
+
+def is_palindrome(s):
+    """Check if a string is a palindrome."""
+    s = s.lower().replace(" ", "")
+    return s == s[::-1]
+
+def remove_duplicates(lst):
+    """Remove duplicates from a list."""
+    seen = set()
+    result = []
+    for item in lst:
+        if item not in seen:
+            seen.add(item)
+            result.append(item)
+    return result
+
+def flatten_list(nested_list):
+    """Flatten a nested list."""
+    result = []
+    for item in nested_list:
+        if isinstance(item, list):
+            result.extend(flatten_list(item))
+        else:
+            result.append(item)
+    return result
+
+def merge_dicts(dict1, dict2):
+    """Merge two dictionaries."""
+    result = dict1.copy()
+    result.update(dict2)
+    return result
+
+def deep_copy_dict(d):
+    """Create a deep copy of a dictionary."""
+    import copy
+    return copy.deepcopy(d)
+
+# List comprehensions
+squares = [x**2 for x in range(10)]
+even_numbers = [x for x in range(20) if x % 2 == 0]
+odd_squares = [x**2 for x in range(10) if x % 2 == 1]
+
+# Dictionary comprehensions
+square_dict = {x: x**2 for x in range(5)}
+word_lengths = {word: len(word) for word in ["hello", "world", "python"]}
+number_types = {x: "even" if x % 2 == 0 else "odd" for x in range(10)}
+
+# Set operations
+set_a = {1, 2, 3, 4, 5}
+set_b = {4, 5, 6, 7, 8}
+union = set_a | set_b
+intersection = set_a & set_b
+difference = set_a - set_b
+symmetric_difference = set_a ^ set_b
+
+# Lambda functions
+add = lambda x, y: x + y
+multiply = lambda x, y: x * y
+square = lambda x: x ** 2
+is_even = lambda x: x % 2 == 0
+
+# Map, filter, reduce
+numbers = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x**2, numbers))
+evens = list(filter(lambda x: x % 2 == 0, numbers))
+
+from functools import reduce
+product = reduce(lambda x, y: x * y, numbers)
+sum_all = reduce(lambda x, y: x + y, numbers)
+
+# Decorators
+def timer_decorator(func):
+    import time
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} took {end - start:.2f} seconds")
+        return result
+    return wrapper
+
+def debug_decorator(func):
+    def wrapper(*args, **kwargs):
+        print(f"Calling {func.__name__} with args: {args}, kwargs: {kwargs}")
+        result = func(*args, **kwargs)
+        print(f"{func.__name__} returned: {result}")
+        return result
+    return wrapper
+
+def cache_decorator(func):
+    cache = {}
+    def wrapper(*args):
+        if args in cache:
+            return cache[args]
+        result = func(*args)
+        cache[args] = result
+        return result
+    return wrapper
+
+@timer_decorator
+def slow_function():
+    import time
+    time.sleep(1)
+    return "Done"
+
+# Generators
+def count_up_to(n):
+    count = 1
+    while count <= n:
+        yield count
+        count += 1
+
+def fibonacci_generator(n):
+    a, b = 0, 1
+    count = 0
+    while count < n:
+        yield a
+        a, b = b, a + b
+        count += 1
+
+def read_large_file(filename):
+    """Read large file line by line using generator."""
+    with open(filename, 'r') as file:
+        for line in file:
+            yield line.strip()
+
+# Context managers
+class FileManager:
+    def __init__(self, filename, mode):
+        self.filename = filename
+        self.mode = mode
+        self.file = None
+    
+    def __enter__(self):
+        self.file = open(self.filename, self.mode)
+        return self.file
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.file:
+            self.file.close()
+
+class Timer:
+    def __enter__(self):
+        import time
+        self.start = time.time()
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        import time
+        self.end = time.time()
+        print(f"Time elapsed: {self.end - self.start:.2f} seconds")
+
+# Regular expressions
+import re
+
+def extract_emails(text):
+    pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    return re.findall(pattern, text)
+
+def extract_phone_numbers(text):
+    pattern = r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b'
+    return re.findall(pattern, text)
+
+def find_urls(text):
+    pattern = r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+'
+    return re.findall(pattern, text)
+
+# Sorting
+students = [
+    {"name": "Alice", "grade": 90},
+    {"name": "Bob", "grade": 85},
+    {"name": "Charlie", "grade": 95}
+]
+
+sorted_students = sorted(students, key=lambda x: x["grade"], reverse=True)
+sorted_by_name = sorted(students, key=lambda x: x["name"])
+
+# Type hints
+from typing import List, Dict, Optional, Union, Tuple, Any, Callable
+
+def process_items(items: List[str]) -> Dict[str, int]:
+    result = {}
+    for item in items:
+        result[item] = len(item)
+    return result
+
+def get_user(id: int) -> Optional[Dict]:
+    users = {1: {"name": "Alice"}, 2: {"name": "Bob"}}
+    return users.get(id)
+
+def divide_numbers(a: float, b: float) -> Union[float, str]:
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return "Cannot divide by zero!"
+
+def apply_function(func: Callable[[int], int], value: int) -> int:
+    return func(value)
+
+# Error handling with specific exceptions
+def safe_divide(a: float, b: float) -> Union[float, str]:
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        return "Error: Division by zero"
+    except TypeError:
+        return "Error: Invalid input types"
+    except Exception as e:
+        return f"Unexpected error: {e}"
+    else:
+        return result
+
+def read_config_file(filename: str) -> Dict:
+    import json
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Config file {filename} not found")
+        return {}
+    except json.JSONDecodeError:
+        print(f"Invalid JSON in {filename}")
+        return {}
+    finally:
+        print(f"Attempted to read {filename}")
+
+# Async functions
+import asyncio
+
+async def fetch_data(url: str) -> str:
+    await asyncio.sleep(1)  # Simulate network delay
+    return f"Data from {url}"
+
+async def process_items_async(items: List[str]) -> List[str]:
+    tasks = [fetch_data(item) for item in items]
+    return await asyncio.gather(*tasks)
+
+async def main_async():
+    urls = ["api/user/1", "api/user/2", "api/user/3"]
+    results = await process_items_async(urls)
+    return results
+
+# Data classes
+from dataclasses import dataclass, field
+from typing import List
+
+@dataclass
+class Person:
+    name: str
+    age: int
+    email: Optional[str] = None
+    
+    def is_adult(self) -> bool:
+        return self.age >= 18
+    
+    def greet(self) -> str:
+        return f"Hello, my name is {self.name}"
+
+@dataclass
+class Student(Person):
+    student_id: str
+    courses: List[str] = field(default_factory=list)
+    
+    def enroll(self, course: str):
+        self.courses.append(course)
+    
+    def get_courses(self) -> List[str]:
+        return self.courses
+
+# Enums
+from enum import Enum, auto
+
+class Color(Enum):
+    RED = auto()
+    GREEN = auto()
+    BLUE = auto()
+    YELLOW = auto()
+
+class Status(Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+def process_status(status: Status):
+    if status == Status.PENDING:
+        print("Task is pending")
+    elif status == Status.COMPLETED:
+        print("Task completed successfully")
+
+# JSON handling
+import json
+
+def save_to_json(data: Any, filename: str) -> bool:
+    try:
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving JSON: {e}")
+        return False
+
+def load_from_json(filename: str) -> Any:
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading JSON: {e}")
+        return None
+
+# CSV handling
+import csv
+
+def read_csv(filename: str) -> List[Dict]:
+    data = []
+    try:
+        with open(filename, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                data.append(row)
+    except FileNotFoundError:
+        print(f"File {filename} not found")
+    except Exception as e:
+        print(f"Error reading CSV: {e}")
+    return data
+
+def write_csv(filename: str, data: List[Dict], fieldnames: List[str]) -> bool:
+    try:
+        with open(filename, 'w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(data)
+        return True
+    except Exception as e:
+        print(f"Error writing CSV: {e}")
+        return False
+
+# Math operations
+import math
+
+def circle_area(radius: float) -> float:
+    return math.pi * radius ** 2
+
+def circle_circumference(radius: float) -> float:
+    return 2 * math.pi * radius
+
+def distance(x1: float, y1: float, x2: float, y2: float) -> float:
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+def quadratic_formula(a: float, b: float, c: float) -> Tuple[Optional[float], Optional[float]]:
+    discriminant = b**2 - 4*a*c
+    if discriminant < 0:
+        return None, None
+    sqrt_disc = math.sqrt(discriminant)
+    root1 = (-b + sqrt_disc) / (2*a)
+    root2 = (-b - sqrt_disc) / (2*a)
+    return root1, root2
+
+# Random numbers
+import random
+
+def random_list(length: int, min_val: int = 0, max_val: int = 100) -> List[int]:
+    return [random.randint(min_val, max_val) for _ in range(length)]
+
+def shuffle_list(items: List[Any]) -> List[Any]:
+    shuffled = items.copy()
+    random.shuffle(shuffled)
+    return shuffled
+
+def random_choice_weighted(items: List[Any], weights: List[float]) -> Any:
+    return random.choices(items, weights=weights, k=1)[0]
+
+# Datetime operations
+from datetime import datetime, timedelta, date
+
+def get_current_time() -> datetime:
+    return datetime.now()
+
+def format_datetime(dt: datetime, fmt: str = "%Y-%m-%d %H:%M:%S") -> str:
+    return dt.strftime(fmt)
+
+def add_days_to_date(start_date: date, days: int) -> date:
+    return start_date + timedelta(days=days)
+
+def days_between(date1: date, date2: date) -> int:
+    return abs((date2 - date1).days)
+
+def is_leap_year(year: int) -> bool:
+    return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+
+# String manipulation
+def count_vowels(s: str) -> int:
+    vowels = "aeiouAEIOU"
+    return sum(1 for char in s if char in vowels)
+
+def count_consonants(s: str) -> int:
+    vowels = "aeiouAEIOU"
+    return sum(1 for char in s if char.isalpha() and char not in vowels)
+
+def capitalize_words(s: str) -> str:
+    return ' '.join(word.capitalize() for word in s.split())
+
+def remove_punctuation(s: str) -> str:
+    import string
+    return s.translate(str.maketrans('', '', string.punctuation))
+
+def find_substring_indices(s: str, substring: str) -> List[int]:
+    indices = []
+    start = 0
+    while True:
+        index = s.find(substring, start)
+        if index == -1:
+            break
+        indices.append(index)
+        start = index + 1
+    return indices
+
+# File path operations
+import os
+from pathlib import Path
+
+def list_files(directory: str, extension: Optional[str] = None) -> List[str]:
+    files = []
+    for file in os.listdir(directory):
+        filepath = os.path.join(directory, file)
+        if os.path.isfile(filepath):
+            if extension and not file.endswith(extension):
+                continue
+            files.append(file)
+    return files
+
+def list_files_recursive(directory: str, extension: Optional[str] = None) -> List[str]:
+    file_list = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if extension and not file.endswith(extension):
+                continue
+            file_list.append(os.path.join(root, file))
+    return file_list
+
+def create_directory(path: str) -> bool:
+    try:
+        os.makedirs(path, exist_ok=True)
+        return True
+    except Exception as e:
+        print(f"Error creating directory: {e}")
+        return False
+
+def get_file_size(filename: str) -> Optional[int]:
+    try:
+        return os.path.getsize(filename)
+    except OSError:
+        return None
+
+# Main function pattern
+def main():
+    """Main entry point of the program."""
+    print("Starting Python Examples Program...")
+    print("-" * 50)
+    
+    # Demonstrate various functions
+    n = 10
+    print(f"Fibonacci({n}) = {fibonacci(n)}")
+    print(f"Factorial({n}) = {factorial(n)}")
+    
+    # Test prime numbers
+    primes = [x for x in range(2, 20) if is_prime(x)]
+    print(f"Primes under 20: {primes}")
+    
+    # Use Rectangle class
+    rect = Rectangle(5, 10)
+    print(f"Rectangle: {rect}")
+    print(f"Area: {rect.area()}")
+    print(f"Perimeter: {rect.perimeter()}")
+    
+    # List comprehensions
+    print(f"\nSquares: {squares}")
+    print(f"Even numbers: {even_numbers}")
+    
+    # String operations
+    test_string = "A man a plan a canal Panama"
+    print(f"\nString: '{test_string}'")
+    print(f"Is palindrome? {is_palindrome(test_string)}")
+    print(f"Reversed: {reverse_string(test_string)}")
+    
+    # Sorting example
+    print(f"\nStudents sorted by grade:")
+    for student in sorted_students:
+        print(f"  {student['name']}: {student['grade']}")
+    
+    print("\nProgram finished successfully!")
+    print("-" * 50)
+
+# Unit testing
+import unittest
+
+class TestMathFunctions(unittest.TestCase):
+    def test_fibonacci(self):
+        self.assertEqual(fibonacci(0), 0)
+        self.assertEqual(fibonacci(1), 1)
+        self.assertEqual(fibonacci(10), 55)
+    
+    def test_factorial(self):
+        self.assertEqual(factorial(0), 1)
+        self.assertEqual(factorial(1), 1)
+        self.assertEqual(factorial(5), 120)
+    
+    def test_is_prime(self):
+        self.assertTrue(is_prime(2))
+        self.assertTrue(is_prime(17))
+        self.assertFalse(is_prime(1))
+        self.assertFalse(is_prime(4))
+        self.assertFalse(is_prime(9))
+    
+    def test_binary_search(self):
+        arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertEqual(binary_search(arr, 5), 4)
+        self.assertEqual(binary_search(arr, 1), 0)
+        self.assertEqual(binary_search(arr, 10), 9)
+        self.assertEqual(binary_search(arr, 11), -1)
+
+class TestStringFunctions(unittest.TestCase):
+    def test_reverse_string(self):
+        self.assertEqual(reverse_string("hello"), "olleh")
+        self.assertEqual(reverse_string(""), "")
+        self.assertEqual(reverse_string("a"), "a")
+    
+    def test_is_palindrome(self):
+        self.assertTrue(is_palindrome("racecar"))
+        self.assertTrue(is_palindrome("A man a plan a canal Panama"))
+        self.assertFalse(is_palindrome("hello"))
+        self.assertTrue(is_palindrome(""))
+
+class TestDataStructures(unittest.TestCase):
+    def test_stack(self):
+        stack = Stack()
+        self.assertTrue(stack.is_empty())
+        stack.push(1)
+        stack.push(2)
+        self.assertEqual(stack.size(), 2)
+        self.assertEqual(stack.peek(), 2)
+        self.assertEqual(stack.pop(), 2)
+        self.assertEqual(stack.pop(), 1)
+        self.assertTrue(stack.is_empty())
+    
+    def test_queue(self):
+        queue = Queue()
+        self.assertTrue(queue.is_empty())
+        queue.enqueue(1)
+        queue.enqueue(2)
+        self.assertEqual(queue.size(), 2)
+        self.assertEqual(queue.dequeue(), 1)
+        self.assertEqual(queue.dequeue(), 2)
+        self.assertTrue(queue.is_empty())
+
+def run_tests():
+    """Run all unit tests."""
+    unittest.main(argv=[''], verbosity=2, exit=False)
+
+# Command-line interface
+import argparse
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Python Examples Program')
+    parser.add_argument('--test', action='store_true', help='Run unit tests')
+    parser.add_argument('--fib', type=int, help='Calculate Fibonacci number')
+    parser.add_argument('--fact', type=int, help='Calculate factorial')
+    parser.add_argument('--prime', type=int, help='Check if number is prime')
+    return parser.parse_args()
+
+# Final comprehensive example
+class DataProcessor:
+    """Process and analyze data."""
+    
+    def __init__(self, data):
+        self.data = data
+        self.processed = False
+    
+    def clean_data(self):
+        """Clean the data by removing null values."""
+        # Remove rows with any NaN values
+        self.data = self.data.dropna()
+        return self
+    
+    def normalize(self):
+        """Normalize numerical columns."""
+        numeric_cols = self.data.select_dtypes(include=[int, float]).columns
+        for col in numeric_cols:
+            mean = self.data[col].mean()
+            std = self.data[col].std()
+            if std != 0:
+                self.data[col] = (self.data[col] - mean) / std
+        return self
+    
+    def encode_categorical(self):
+        """Encode categorical variables."""
+        categorical_cols = self.data.select_dtypes(include=[object]).columns
+        for col in categorical_cols:
+            dummies = pd.get_dummies(self.data[col], prefix=col)
+            self.data = pd.concat([self.data, dummies], axis=1)
+            self.data = self.data.drop(col, axis=1)
+        return self
+    
+    def process(self):
+        """Main processing pipeline."""
+        self.clean_data().normalize().encode_categorical()
+        self.processed = True
+        return self.data
+    
+    def export(self, filename: str):
+        """Export processed data to CSV."""
+        if not self.processed:
+            raise ValueError("Data not processed yet!")
+        self.data.to_csv(filename, index=False)
+        print(f"Data exported to {filename}")
+
+# If this script is run directly, execute main()
+if __name__ == "__main__":
+    args = parse_arguments()
+    
+    if args.test:
+        print("Running unit tests...")
+        run_tests()
+    elif args.fib:
+        print(f"Fibonacci({args.fib}) = {fibonacci(args.fib)}")
+    elif args.fact:
+        print(f"Factorial({args.fact}) = {factorial(args.fact)}")
+    elif args.prime:
+        result = "is prime" if is_prime(args.prime) else "is not prime"
+        print(f"{args.prime} {result}")
+    else:
+        main()
+    
+    print("\nProgram execution completed!")
+
+    # Python Code Examples
+
+def fibonacci(n):
+    """Return the nth Fibonacci number."""
+    if n <= 1:
+        return n
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+
+def factorial(n):
+    """Calculate factorial recursively."""
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
+
+def is_prime(num):
+    """Check if a number is prime."""
+    if num <= 1:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+def binary_search(arr, target):
+    """Binary search implementation."""
+    low, high = 0, len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+def bubble_sort(arr):
+    """Bubble sort implementation."""
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+def quick_sort(arr):
+    """Quick sort implementation."""
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+
+class Rectangle:
+    """A simple rectangle class."""
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+    
+    def area(self):
+        return self.width * self.height
+    
+    def perimeter(self):
+        return 2 * (self.width + self.height)
+    
+    def __str__(self):
+        return f"Rectangle({self.width}x{self.height})"
+    
+    def __repr__(self):
+        return f"Rectangle(width={self.width}, height={self.height})"
+
+class Stack:
+    """Stack implementation using list."""
+    def __init__(self):
+        self.items = []
+    
+    def push(self, item):
+        self.items.append(item)
+    
+    def pop(self):
+        if not self.is_empty():
+            return self.items.pop()
+        return None
+    
+    def peek(self):
+        if not self.is_empty():
+            return self.items[-1]
+        return None
+    
+    def is_empty(self):
+        return len(self.items) == 0
+    
+    def size(self):
+        return len(self.items)
+
+class Queue:
+    """Queue implementation using deque."""
+    from collections import deque
+    
+    def __init__(self):
+        self.items = deque()
+    
+    def enqueue(self, item):
+        self.items.append(item)
+    
+    def dequeue(self):
+        if not self.is_empty():
+            return self.items.popleft()
+        return None
+    
+    def is_empty(self):
+        return len(self.items) == 0
+    
+    def size(self):
+        return len(self.items)
+
+def read_file(filename):
+    """Read a file safely."""
+    try:
+        with open(filename, 'r') as file:
+            return file.read()
+    except FileNotFoundError:
+        print(f"File {filename} not found!")
+        return None
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        return None
+
+def write_file(filename, content):
+    """Write content to a file."""
+    try:
+        with open(filename, 'w') as file:
+            file.write(content)
+        return True
+    except Exception as e:
+        print(f"Error writing file: {e}")
+        return False
+
+def count_words(text):
+    """Count words in a string."""
+    words = text.split()
+    return len(words)
+
+def find_max(numbers):
+    """Find maximum value in a list."""
+    if not numbers:
+        return None
+    max_val = numbers[0]
+    for num in numbers[1:]:
+        if num > max_val:
+            max_val = num
+    return max_val
+
+def find_min(numbers):
+    """Find minimum value in a list."""
+    if not numbers:
+        return None
+    min_val = numbers[0]
+    for num in numbers[1:]:
+        if num < min_val:
+            min_val = num
+    return min_val
+
+def calculate_average(numbers):
+    """Calculate average of numbers."""
+    if not numbers:
+        return None
+    return sum(numbers) / len(numbers)
+
+def reverse_string(s):
+    """Reverse a string."""
+    return s[::-1]
+
+def is_palindrome(s):
+    """Check if a string is a palindrome."""
+    s = s.lower().replace(" ", "")
+    return s == s[::-1]
+
+def remove_duplicates(lst):
+    """Remove duplicates from a list."""
+    seen = set()
+    result = []
+    for item in lst:
+        if item not in seen:
+            seen.add(item)
+            result.append(item)
+    return result
+
+def flatten_list(nested_list):
+    """Flatten a nested list."""
+    result = []
+    for item in nested_list:
+        if isinstance(item, list):
+            result.extend(flatten_list(item))
+        else:
+            result.append(item)
+    return result
+
+def merge_dicts(dict1, dict2):
+    """Merge two dictionaries."""
+    result = dict1.copy()
+    result.update(dict2)
+    return result
+
+def deep_copy_dict(d):
+    """Create a deep copy of a dictionary."""
+    import copy
+    return copy.deepcopy(d)
+
+# List comprehensions
+squares = [x**2 for x in range(10)]
+even_numbers = [x for x in range(20) if x % 2 == 0]
+odd_squares = [x**2 for x in range(10) if x % 2 == 1]
+
+# Dictionary comprehensions
+square_dict = {x: x**2 for x in range(5)}
+word_lengths = {word: len(word) for word in ["hello", "world", "python"]}
+number_types = {x: "even" if x % 2 == 0 else "odd" for x in range(10)}
+
+# Set operations
+set_a = {1, 2, 3, 4, 5}
+set_b = {4, 5, 6, 7, 8}
+union = set_a | set_b
+intersection = set_a & set_b
+difference = set_a - set_b
+symmetric_difference = set_a ^ set_b
+
+# Lambda functions
+add = lambda x, y: x + y
+multiply = lambda x, y: x * y
+square = lambda x: x ** 2
+is_even = lambda x: x % 2 == 0
+
+# Map, filter, reduce
+numbers = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x**2, numbers))
+evens = list(filter(lambda x: x % 2 == 0, numbers))
+
+from functools import reduce
+product = reduce(lambda x, y: x * y, numbers)
+sum_all = reduce(lambda x, y: x + y, numbers)
+
+# Decorators
+def timer_decorator(func):
+    import time
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} took {end - start:.2f} seconds")
+        return result
+    return wrapper
+
+def debug_decorator(func):
+    def wrapper(*args, **kwargs):
+        print(f"Calling {func.__name__} with args: {args}, kwargs: {kwargs}")
+        result = func(*args, **kwargs)
+        print(f"{func.__name__} returned: {result}")
+        return result
+    return wrapper
+
+def cache_decorator(func):
+    cache = {}
+    def wrapper(*args):
+        if args in cache:
+            return cache[args]
+        result = func(*args)
+        cache[args] = result
+        return result
+    return wrapper
+
+@timer_decorator
+def slow_function():
+    import time
+    time.sleep(1)
+    return "Done"
+
+# Generators
+def count_up_to(n):
+    count = 1
+    while count <= n:
+        yield count
+        count += 1
+
+def fibonacci_generator(n):
+    a, b = 0, 1
+    count = 0
+    while count < n:
+        yield a
+        a, b = b, a + b
+        count += 1
+
+def read_large_file(filename):
+    """Read large file line by line using generator."""
+    with open(filename, 'r') as file:
+        for line in file:
+            yield line.strip()
+
+# Context managers
+class FileManager:
+    def __init__(self, filename, mode):
+        self.filename = filename
+        self.mode = mode
+        self.file = None
+    
+    def __enter__(self):
+        self.file = open(self.filename, self.mode)
+        return self.file
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.file:
+            self.file.close()
+
+class Timer:
+    def __enter__(self):
+        import time
+        self.start = time.time()
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        import time
+        self.end = time.time()
+        print(f"Time elapsed: {self.end - self.start:.2f} seconds")
+
+# Regular expressions
+import re
+
+def extract_emails(text):
+    pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    return re.findall(pattern, text)
+
+def extract_phone_numbers(text):
+    pattern = r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b'
+    return re.findall(pattern, text)
+
+def find_urls(text):
+    pattern = r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+'
+    return re.findall(pattern, text)
+
+# Sorting
+students = [
+    {"name": "Alice", "grade": 90},
+    {"name": "Bob", "grade": 85},
+    {"name": "Charlie", "grade": 95}
+]
+
+sorted_students = sorted(students, key=lambda x: x["grade"], reverse=True)
+sorted_by_name = sorted(students, key=lambda x: x["name"])
+
+# Type hints
+from typing import List, Dict, Optional, Union, Tuple, Any, Callable
+
+def process_items(items: List[str]) -> Dict[str, int]:
+    result = {}
+    for item in items:
+        result[item] = len(item)
+    return result
+
+def get_user(id: int) -> Optional[Dict]:
+    users = {1: {"name": "Alice"}, 2: {"name": "Bob"}}
+    return users.get(id)
+
+def divide_numbers(a: float, b: float) -> Union[float, str]:
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return "Cannot divide by zero!"
+
+def apply_function(func: Callable[[int], int], value: int) -> int:
+    return func(value)
+
+# Error handling with specific exceptions
+def safe_divide(a: float, b: float) -> Union[float, str]:
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        return "Error: Division by zero"
+    except TypeError:
+        return "Error: Invalid input types"
+    except Exception as e:
+        return f"Unexpected error: {e}"
+    else:
+        return result
+
+def read_config_file(filename: str) -> Dict:
+    import json
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Config file {filename} not found")
+        return {}
+    except json.JSONDecodeError:
+        print(f"Invalid JSON in {filename}")
+        return {}
+    finally:
+        print(f"Attempted to read {filename}")
+
+# Async functions
+import asyncio
+
+async def fetch_data(url: str) -> str:
+    await asyncio.sleep(1)  # Simulate network delay
+    return f"Data from {url}"
+
+async def process_items_async(items: List[str]) -> List[str]:
+    tasks = [fetch_data(item) for item in items]
+    return await asyncio.gather(*tasks)
+
+async def main_async():
+    urls = ["api/user/1", "api/user/2", "api/user/3"]
+    results = await process_items_async(urls)
+    return results
+
+# Data classes
+from dataclasses import dataclass, field
+from typing import List
+
+@dataclass
+class Person:
+    name: str
+    age: int
+    email: Optional[str] = None
+    
+    def is_adult(self) -> bool:
+        return self.age >= 18
+    
+    def greet(self) -> str:
+        return f"Hello, my name is {self.name}"
+
+@dataclass
+class Student(Person):
+    student_id: str
+    courses: List[str] = field(default_factory=list)
+    
+    def enroll(self, course: str):
+        self.courses.append(course)
+    
+    def get_courses(self) -> List[str]:
+        return self.courses
+
+# Enums
+from enum import Enum, auto
+
+class Color(Enum):
+    RED = auto()
+    GREEN = auto()
+    BLUE = auto()
+    YELLOW = auto()
+
+class Status(Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+def process_status(status: Status):
+    if status == Status.PENDING:
+        print("Task is pending")
+    elif status == Status.COMPLETED:
+        print("Task completed successfully")
+
+# JSON handling
+import json
+
+def save_to_json(data: Any, filename: str) -> bool:
+    try:
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving JSON: {e}")
+        return False
+
+def load_from_json(filename: str) -> Any:
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading JSON: {e}")
+        return None
+
+# CSV handling
+import csv
+
+def read_csv(filename: str) -> List[Dict]:
+    data = []
+    try:
+        with open(filename, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                data.append(row)
+    except FileNotFoundError:
+        print(f"File {filename} not found")
+    except Exception as e:
+        print(f"Error reading CSV: {e}")
+    return data
+
+def write_csv(filename: str, data: List[Dict], fieldnames: List[str]) -> bool:
+    try:
+        with open(filename, 'w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(data)
+        return True
+    except Exception as e:
+        print(f"Error writing CSV: {e}")
+        return False
+
+# Math operations
+import math
+
+def circle_area(radius: float) -> float:
+    return math.pi * radius ** 2
+
+def circle_circumference(radius: float) -> float:
+    return 2 * math.pi * radius
+
+def distance(x1: float, y1: float, x2: float, y2: float) -> float:
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+def quadratic_formula(a: float, b: float, c: float) -> Tuple[Optional[float], Optional[float]]:
+    discriminant = b**2 - 4*a*c
+    if discriminant < 0:
+        return None, None
+    sqrt_disc = math.sqrt(discriminant)
+    root1 = (-b + sqrt_disc) / (2*a)
+    root2 = (-b - sqrt_disc) / (2*a)
+    return root1, root2
+
+# Random numbers
+import random
+
+def random_list(length: int, min_val: int = 0, max_val: int = 100) -> List[int]:
+    return [random.randint(min_val, max_val) for _ in range(length)]
+
+def shuffle_list(items: List[Any]) -> List[Any]:
+    shuffled = items.copy()
+    random.shuffle(shuffled)
+    return shuffled
+
+def random_choice_weighted(items: List[Any], weights: List[float]) -> Any:
+    return random.choices(items, weights=weights, k=1)[0]
+
+# Datetime operations
+from datetime import datetime, timedelta, date
+
+def get_current_time() -> datetime:
+    return datetime.now()
+
+def format_datetime(dt: datetime, fmt: str = "%Y-%m-%d %H:%M:%S") -> str:
+    return dt.strftime(fmt)
+
+def add_days_to_date(start_date: date, days: int) -> date:
+    return start_date + timedelta(days=days)
+
+def days_between(date1: date, date2: date) -> int:
+    return abs((date2 - date1).days)
+
+def is_leap_year(year: int) -> bool:
+    return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+
+# String manipulation
+def count_vowels(s: str) -> int:
+    vowels = "aeiouAEIOU"
+    return sum(1 for char in s if char in vowels)
+
+def count_consonants(s: str) -> int:
+    vowels = "aeiouAEIOU"
+    return sum(1 for char in s if char.isalpha() and char not in vowels)
+
+def capitalize_words(s: str) -> str:
+    return ' '.join(word.capitalize() for word in s.split())
+
+def remove_punctuation(s: str) -> str:
+    import string
+    return s.translate(str.maketrans('', '', string.punctuation))
+
+def find_substring_indices(s: str, substring: str) -> List[int]:
+    indices = []
+    start = 0
+    while True:
+        index = s.find(substring, start)
+        if index == -1:
+            break
+        indices.append(index)
+        start = index + 1
+    return indices
+
+# File path operations
+import os
+from pathlib import Path
+
+def list_files(directory: str, extension: Optional[str] = None) -> List[str]:
+    files = []
+    for file in os.listdir(directory):
+        filepath = os.path.join(directory, file)
+        if os.path.isfile(filepath):
+            if extension and not file.endswith(extension):
+                continue
+            files.append(file)
+    return files
+
+def list_files_recursive(directory: str, extension: Optional[str] = None) -> List[str]:
+    file_list = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if extension and not file.endswith(extension):
+                continue
+            file_list.append(os.path.join(root, file))
+    return file_list
+
+def create_directory(path: str) -> bool:
+    try:
+        os.makedirs(path, exist_ok=True)
+        return True
+    except Exception as e:
+        print(f"Error creating directory: {e}")
+        return False
+
+def get_file_size(filename: str) -> Optional[int]:
+    try:
+        return os.path.getsize(filename)
+    except OSError:
+        return None
+
+# Main function pattern
+def main():
+    """Main entry point of the program."""
+    print("Starting Python Examples Program...")
+    print("-" * 50)
+    
+    # Demonstrate various functions
+    n = 10
+    print(f"Fibonacci({n}) = {fibonacci(n)}")
+    print(f"Factorial({n}) = {factorial(n)}")
+    
+    # Test prime numbers
+    primes = [x for x in range(2, 20) if is_prime(x)]
+    print(f"Primes under 20: {primes}")
+    
+    # Use Rectangle class
+    rect = Rectangle(5, 10)
+    print(f"Rectangle: {rect}")
+    print(f"Area: {rect.area()}")
+    print(f"Perimeter: {rect.perimeter()}")
+    
+    # List comprehensions
+    print(f"\nSquares: {squares}")
+    print(f"Even numbers: {even_numbers}")
+    
+    # String operations
+    test_string = "A man a plan a canal Panama"
+    print(f"\nString: '{test_string}'")
+    print(f"Is palindrome? {is_palindrome(test_string)}")
+    print(f"Reversed: {reverse_string(test_string)}")
+    
+    # Sorting example
+    print(f"\nStudents sorted by grade:")
+    for student in sorted_students:
+        print(f"  {student['name']}: {student['grade']}")
+    
+    print("\nProgram finished successfully!")
+    print("-" * 50)
+
+# Unit testing
+import unittest
+
+class TestMathFunctions(unittest.TestCase):
+    def test_fibonacci(self):
+        self.assertEqual(fibonacci(0), 0)
+        self.assertEqual(fibonacci(1), 1)
+        self.assertEqual(fibonacci(10), 55)
+    
+    def test_factorial(self):
+        self.assertEqual(factorial(0), 1)
+        self.assertEqual(factorial(1), 1)
+        self.assertEqual(factorial(5), 120)
+    
+    def test_is_prime(self):
+        self.assertTrue(is_prime(2))
+        self.assertTrue(is_prime(17))
+        self.assertFalse(is_prime(1))
+        self.assertFalse(is_prime(4))
+        self.assertFalse(is_prime(9))
+    
+    def test_binary_search(self):
+        arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertEqual(binary_search(arr, 5), 4)
+        self.assertEqual(binary_search(arr, 1), 0)
+        self.assertEqual(binary_search(arr, 10), 9)
+        self.assertEqual(binary_search(arr, 11), -1)
+
+class TestStringFunctions(unittest.TestCase):
+    def test_reverse_string(self):
+        self.assertEqual(reverse_string("hello"), "olleh")
+        self.assertEqual(reverse_string(""), "")
+        self.assertEqual(reverse_string("a"), "a")
+    
+    def test_is_palindrome(self):
+        self.assertTrue(is_palindrome("racecar"))
+        self.assertTrue(is_palindrome("A man a plan a canal Panama"))
+        self.assertFalse(is_palindrome("hello"))
+        self.assertTrue(is_palindrome(""))
+
+class TestDataStructures(unittest.TestCase):
+    def test_stack(self):
+        stack = Stack()
+        self.assertTrue(stack.is_empty())
+        stack.push(1)
+        stack.push(2)
+        self.assertEqual(stack.size(), 2)
+        self.assertEqual(stack.peek(), 2)
+        self.assertEqual(stack.pop(), 2)
+        self.assertEqual(stack.pop(), 1)
+        self.assertTrue(stack.is_empty())
+    
+    def test_queue(self):
+        queue = Queue()
+        self.assertTrue(queue.is_empty())
+        queue.enqueue(1)
+        queue.enqueue(2)
+        self.assertEqual(queue.size(), 2)
+        self.assertEqual(queue.dequeue(), 1)
+        self.assertEqual(queue.dequeue(), 2)
+        self.assertTrue(queue.is_empty())
+
+def run_tests():
+    """Run all unit tests."""
+    unittest.main(argv=[''], verbosity=2, exit=False)
+
+# Command-line interface
+import argparse
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Python Examples Program')
+    parser.add_argument('--test', action='store_true', help='Run unit tests')
+    parser.add_argument('--fib', type=int, help='Calculate Fibonacci number')
+    parser.add_argument('--fact', type=int, help='Calculate factorial')
+    parser.add_argument('--prime', type=int, help='Check if number is prime')
+    return parser.parse_args()
+
+# Final comprehensive example
+class DataProcessor:
+    """Process and analyze data."""
+    
+    def __init__(self, data):
+        self.data = data
+        self.processed = False
+    
+    def clean_data(self):
+        """Clean the data by removing null values."""
+        # Remove rows with any NaN values
+        self.data = self.data.dropna()
+        return self
+    
+    def normalize(self):
+        """Normalize numerical columns."""
+        numeric_cols = self.data.select_dtypes(include=[int, float]).columns
+        for col in numeric_cols:
+            mean = self.data[col].mean()
+            std = self.data[col].std()
+            if std != 0:
+                self.data[col] = (self.data[col] - mean) / std
+        return self
+    
+    def encode_categorical(self):
+        """Encode categorical variables."""
+        categorical_cols = self.data.select_dtypes(include=[object]).columns
+        for col in categorical_cols:
+            dummies = pd.get_dummies(self.data[col], prefix=col)
+            self.data = pd.concat([self.data, dummies], axis=1)
+            self.data = self.data.drop(col, axis=1)
+        return self
+    
+    def process(self):
+        """Main processing pipeline."""
+        self.clean_data().normalize().encode_categorical()
+        self.processed = True
+        return self.data
+    
+    def export(self, filename: str):
+        """Export processed data to CSV."""
+        if not self.processed:
+            raise ValueError("Data not processed yet!")
+        self.data.to_csv(filename, index=False)
+        print(f"Data exported to {filename}")
+
+# If this script is run directly, execute main()
+if __name__ == "__main__":
+    args = parse_arguments()
+    
+    if args.test:
+        print("Running unit tests...")
+        run_tests()
+    elif args.fib:
+        print(f"Fibonacci({args.fib}) = {fibonacci(args.fib)}")
+    elif args.fact:
+        print(f"Factorial({args.fact}) = {factorial(args.fact)}")
+    elif args.prime:
+        result = "is prime" if is_prime(args.prime) else "is not prime"
+        print(f"{args.prime} {result}")
+    else:
+        main()
+    
+    print("\nProgram execution completed!")
+
+    # Python Code Examples
+
+def fibonacci(n):
+    """Return the nth Fibonacci number."""
+    if n <= 1:
+        return n
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+
+def factorial(n):
+    """Calculate factorial recursively."""
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
+
+def is_prime(num):
+    """Check if a number is prime."""
+    if num <= 1:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+def binary_search(arr, target):
+    """Binary search implementation."""
+    low, high = 0, len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+def bubble_sort(arr):
+    """Bubble sort implementation."""
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+def quick_sort(arr):
+    """Quick sort implementation."""
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+
+class Rectangle:
+    """A simple rectangle class."""
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+    
+    def area(self):
+        return self.width * self.height
+    
+    def perimeter(self):
+        return 2 * (self.width + self.height)
+    
+    def __str__(self):
+        return f"Rectangle({self.width}x{self.height})"
+    
+    def __repr__(self):
+        return f"Rectangle(width={self.width}, height={self.height})"
+
+class Stack:
+    """Stack implementation using list."""
+    def __init__(self):
+        self.items = []
+    
+    def push(self, item):
+        self.items.append(item)
+    
+    def pop(self):
+        if not self.is_empty():
+            return self.items.pop()
+        return None
+    
+    def peek(self):
+        if not self.is_empty():
+            return self.items[-1]
+        return None
+    
+    def is_empty(self):
+        return len(self.items) == 0
+    
+    def size(self):
+        return len(self.items)
+
+class Queue:
+    """Queue implementation using deque."""
+    from collections import deque
+    
+    def __init__(self):
+        self.items = deque()
+    
+    def enqueue(self, item):
+        self.items.append(item)
+    
+    def dequeue(self):
+        if not self.is_empty():
+            return self.items.popleft()
+        return None
+    
+    def is_empty(self):
+        return len(self.items) == 0
+    
+    def size(self):
+        return len(self.items)
+
+def read_file(filename):
+    """Read a file safely."""
+    try:
+        with open(filename, 'r') as file:
+            return file.read()
+    except FileNotFoundError:
+        print(f"File {filename} not found!")
+        return None
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        return None
+
+def write_file(filename, content):
+    """Write content to a file."""
+    try:
+        with open(filename, 'w') as file:
+            file.write(content)
+        return True
+    except Exception as e:
+        print(f"Error writing file: {e}")
+        return False
+
+def count_words(text):
+    """Count words in a string."""
+    words = text.split()
+    return len(words)
+
+def find_max(numbers):
+    """Find maximum value in a list."""
+    if not numbers:
+        return None
+    max_val = numbers[0]
+    for num in numbers[1:]:
+        if num > max_val:
+            max_val = num
+    return max_val
+
+def find_min(numbers):
+    """Find minimum value in a list."""
+    if not numbers:
+        return None
+    min_val = numbers[0]
+    for num in numbers[1:]:
+        if num < min_val:
+            min_val = num
+    return min_val
+
+def calculate_average(numbers):
+    """Calculate average of numbers."""
+    if not numbers:
+        return None
+    return sum(numbers) / len(numbers)
+
+def reverse_string(s):
+    """Reverse a string."""
+    return s[::-1]
+
+def is_palindrome(s):
+    """Check if a string is a palindrome."""
+    s = s.lower().replace(" ", "")
+    return s == s[::-1]
+
+def remove_duplicates(lst):
+    """Remove duplicates from a list."""
+    seen = set()
+    result = []
+    for item in lst:
+        if item not in seen:
+            seen.add(item)
+            result.append(item)
+    return result
+
+def flatten_list(nested_list):
+    """Flatten a nested list."""
+    result = []
+    for item in nested_list:
+        if isinstance(item, list):
+            result.extend(flatten_list(item))
+        else:
+            result.append(item)
+    return result
+
+def merge_dicts(dict1, dict2):
+    """Merge two dictionaries."""
+    result = dict1.copy()
+    result.update(dict2)
+    return result
+
+def deep_copy_dict(d):
+    """Create a deep copy of a dictionary."""
+    import copy
+    return copy.deepcopy(d)
+
+# List comprehensions
+squares = [x**2 for x in range(10)]
+even_numbers = [x for x in range(20) if x % 2 == 0]
+odd_squares = [x**2 for x in range(10) if x % 2 == 1]
+
+# Dictionary comprehensions
+square_dict = {x: x**2 for x in range(5)}
+word_lengths = {word: len(word) for word in ["hello", "world", "python"]}
+number_types = {x: "even" if x % 2 == 0 else "odd" for x in range(10)}
+
+# Set operations
+set_a = {1, 2, 3, 4, 5}
+set_b = {4, 5, 6, 7, 8}
+union = set_a | set_b
+intersection = set_a & set_b
+difference = set_a - set_b
+symmetric_difference = set_a ^ set_b
+
+# Lambda functions
+add = lambda x, y: x + y
+multiply = lambda x, y: x * y
+square = lambda x: x ** 2
+is_even = lambda x: x % 2 == 0
+
+# Map, filter, reduce
+numbers = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x**2, numbers))
+evens = list(filter(lambda x: x % 2 == 0, numbers))
+
+from functools import reduce
+product = reduce(lambda x, y: x * y, numbers)
+sum_all = reduce(lambda x, y: x + y, numbers)
+
+# Decorators
+def timer_decorator(func):
+    import time
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} took {end - start:.2f} seconds")
+        return result
+    return wrapper
+
+def debug_decorator(func):
+    def wrapper(*args, **kwargs):
+        print(f"Calling {func.__name__} with args: {args}, kwargs: {kwargs}")
+        result = func(*args, **kwargs)
+        print(f"{func.__name__} returned: {result}")
+        return result
+    return wrapper
+
+def cache_decorator(func):
+    cache = {}
+    def wrapper(*args):
+        if args in cache:
+            return cache[args]
+        result = func(*args)
+        cache[args] = result
+        return result
+    return wrapper
+
+@timer_decorator
+def slow_function():
+    import time
+    time.sleep(1)
+    return "Done"
+
+# Generators
+def count_up_to(n):
+    count = 1
+    while count <= n:
+        yield count
+        count += 1
+
+def fibonacci_generator(n):
+    a, b = 0, 1
+    count = 0
+    while count < n:
+        yield a
+        a, b = b, a + b
+        count += 1
+
+def read_large_file(filename):
+    """Read large file line by line using generator."""
+    with open(filename, 'r') as file:
+        for line in file:
+            yield line.strip()
+
+# Context managers
+class FileManager:
+    def __init__(self, filename, mode):
+        self.filename = filename
+        self.mode = mode
+        self.file = None
+    
+    def __enter__(self):
+        self.file = open(self.filename, self.mode)
+        return self.file
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.file:
+            self.file.close()
+
+class Timer:
+    def __enter__(self):
+        import time
+        self.start = time.time()
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        import time
+        self.end = time.time()
+        print(f"Time elapsed: {self.end - self.start:.2f} seconds")
+
+# Regular expressions
+import re
+
+def extract_emails(text):
+    pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    return re.findall(pattern, text)
+
+def extract_phone_numbers(text):
+    pattern = r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b'
+    return re.findall(pattern, text)
+
+def find_urls(text):
+    pattern = r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+'
+    return re.findall(pattern, text)
+
+# Sorting
+students = [
+    {"name": "Alice", "grade": 90},
+    {"name": "Bob", "grade": 85},
+    {"name": "Charlie", "grade": 95}
+]
+
+sorted_students = sorted(students, key=lambda x: x["grade"], reverse=True)
+sorted_by_name = sorted(students, key=lambda x: x["name"])
+
+# Type hints
+from typing import List, Dict, Optional, Union, Tuple, Any, Callable
+
+def process_items(items: List[str]) -> Dict[str, int]:
+    result = {}
+    for item in items:
+        result[item] = len(item)
+    return result
+
+def get_user(id: int) -> Optional[Dict]:
+    users = {1: {"name": "Alice"}, 2: {"name": "Bob"}}
+    return users.get(id)
+
+def divide_numbers(a: float, b: float) -> Union[float, str]:
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return "Cannot divide by zero!"
+
+def apply_function(func: Callable[[int], int], value: int) -> int:
+    return func(value)
+
+# Error handling with specific exceptions
+def safe_divide(a: float, b: float) -> Union[float, str]:
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        return "Error: Division by zero"
+    except TypeError:
+        return "Error: Invalid input types"
+    except Exception as e:
+        return f"Unexpected error: {e}"
+    else:
+        return result
+
+def read_config_file(filename: str) -> Dict:
+    import json
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Config file {filename} not found")
+        return {}
+    except json.JSONDecodeError:
+        print(f"Invalid JSON in {filename}")
+        return {}
+    finally:
+        print(f"Attempted to read {filename}")
+
+# Async functions
+import asyncio
+
+async def fetch_data(url: str) -> str:
+    await asyncio.sleep(1)  # Simulate network delay
+    return f"Data from {url}"
+
+async def process_items_async(items: List[str]) -> List[str]:
+    tasks = [fetch_data(item) for item in items]
+    return await asyncio.gather(*tasks)
+
+async def main_async():
+    urls = ["api/user/1", "api/user/2", "api/user/3"]
+    results = await process_items_async(urls)
+    return results
+
+# Data classes
+from dataclasses import dataclass, field
+from typing import List
+
+@dataclass
+class Person:
+    name: str
+    age: int
+    email: Optional[str] = None
+    
+    def is_adult(self) -> bool:
+        return self.age >= 18
+    
+    def greet(self) -> str:
+        return f"Hello, my name is {self.name}"
+
+@dataclass
+class Student(Person):
+    student_id: str
+    courses: List[str] = field(default_factory=list)
+    
+    def enroll(self, course: str):
+        self.courses.append(course)
+    
+    def get_courses(self) -> List[str]:
+        return self.courses
+
+# Enums
+from enum import Enum, auto
+
+class Color(Enum):
+    RED = auto()
+    GREEN = auto()
+    BLUE = auto()
+    YELLOW = auto()
+
+class Status(Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+def process_status(status: Status):
+    if status == Status.PENDING:
+        print("Task is pending")
+    elif status == Status.COMPLETED:
+        print("Task completed successfully")
+
+# JSON handling
+import json
+
+def save_to_json(data: Any, filename: str) -> bool:
+    try:
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving JSON: {e}")
+        return False
+
+def load_from_json(filename: str) -> Any:
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading JSON: {e}")
+        return None
+
+# CSV handling
+import csv
+
+def read_csv(filename: str) -> List[Dict]:
+    data = []
+    try:
+        with open(filename, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                data.append(row)
+    except FileNotFoundError:
+        print(f"File {filename} not found")
+    except Exception as e:
+        print(f"Error reading CSV: {e}")
+    return data
+
+def write_csv(filename: str, data: List[Dict], fieldnames: List[str]) -> bool:
+    try:
+        with open(filename, 'w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(data)
+        return True
+    except Exception as e:
+        print(f"Error writing CSV: {e}")
+        return False
+
+# Math operations
+import math
+
+def circle_area(radius: float) -> float:
+    return math.pi * radius ** 2
+
+def circle_circumference(radius: float) -> float:
+    return 2 * math.pi * radius
+
+def distance(x1: float, y1: float, x2: float, y2: float) -> float:
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+def quadratic_formula(a: float, b: float, c: float) -> Tuple[Optional[float], Optional[float]]:
+    discriminant = b**2 - 4*a*c
+    if discriminant < 0:
+        return None, None
+    sqrt_disc = math.sqrt(discriminant)
+    root1 = (-b + sqrt_disc) / (2*a)
+    root2 = (-b - sqrt_disc) / (2*a)
+    return root1, root2
+
+# Random numbers
+import random
+
+def random_list(length: int, min_val: int = 0, max_val: int = 100) -> List[int]:
+    return [random.randint(min_val, max_val) for _ in range(length)]
+
+def shuffle_list(items: List[Any]) -> List[Any]:
+    shuffled = items.copy()
+    random.shuffle(shuffled)
+    return shuffled
+
+def random_choice_weighted(items: List[Any], weights: List[float]) -> Any:
+    return random.choices(items, weights=weights, k=1)[0]
+
+# Datetime operations
+from datetime import datetime, timedelta, date
+
+def get_current_time() -> datetime:
+    return datetime.now()
+
+def format_datetime(dt: datetime, fmt: str = "%Y-%m-%d %H:%M:%S") -> str:
+    return dt.strftime(fmt)
+
+def add_days_to_date(start_date: date, days: int) -> date:
+    return start_date + timedelta(days=days)
+
+def days_between(date1: date, date2: date) -> int:
+    return abs((date2 - date1).days)
+
+def is_leap_year(year: int) -> bool:
+    return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+
+# String manipulation
+def count_vowels(s: str) -> int:
+    vowels = "aeiouAEIOU"
+    return sum(1 for char in s if char in vowels)
+
+def count_consonants(s: str) -> int:
+    vowels = "aeiouAEIOU"
+    return sum(1 for char in s if char.isalpha() and char not in vowels)
+
+def capitalize_words(s: str) -> str:
+    return ' '.join(word.capitalize() for word in s.split())
+
+def remove_punctuation(s: str) -> str:
+    import string
+    return s.translate(str.maketrans('', '', string.punctuation))
+
+def find_substring_indices(s: str, substring: str) -> List[int]:
+    indices = []
+    start = 0
+    while True:
+        index = s.find(substring, start)
+        if index == -1:
+            break
+        indices.append(index)
+        start = index + 1
+    return indices
+
+# File path operations
+import os
+from pathlib import Path
+
+def list_files(directory: str, extension: Optional[str] = None) -> List[str]:
+    files = []
+    for file in os.listdir(directory):
+        filepath = os.path.join(directory, file)
+        if os.path.isfile(filepath):
+            if extension and not file.endswith(extension):
+                continue
+            files.append(file)
+    return files
+
+def list_files_recursive(directory: str, extension: Optional[str] = None) -> List[str]:
+    file_list = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if extension and not file.endswith(extension):
+                continue
+            file_list.append(os.path.join(root, file))
+    return file_list
+
+def create_directory(path: str) -> bool:
+    try:
+        os.makedirs(path, exist_ok=True)
+        return True
+    except Exception as e:
+        print(f"Error creating directory: {e}")
+        return False
+
+def get_file_size(filename: str) -> Optional[int]:
+    try:
+        return os.path.getsize(filename)
+    except OSError:
+        return None
+
+# Main function pattern
+def main():
+    """Main entry point of the program."""
+    print("Starting Python Examples Program...")
+    print("-" * 50)
+    
+    # Demonstrate various functions
+    n = 10
+    print(f"Fibonacci({n}) = {fibonacci(n)}")
+    print(f"Factorial({n}) = {factorial(n)}")
+    
+    # Test prime numbers
+    primes = [x for x in range(2, 20) if is_prime(x)]
+    print(f"Primes under 20: {primes}")
+    
+    # Use Rectangle class
+    rect = Rectangle(5, 10)
+    print(f"Rectangle: {rect}")
+    print(f"Area: {rect.area()}")
+    print(f"Perimeter: {rect.perimeter()}")
+    
+    # List comprehensions
+    print(f"\nSquares: {squares}")
+    print(f"Even numbers: {even_numbers}")
+    
+    # String operations
+    test_string = "A man a plan a canal Panama"
+    print(f"\nString: '{test_string}'")
+    print(f"Is palindrome? {is_palindrome(test_string)}")
+    print(f"Reversed: {reverse_string(test_string)}")
+    
+    # Sorting example
+    print(f"\nStudents sorted by grade:")
+    for student in sorted_students:
+        print(f"  {student['name']}: {student['grade']}")
+    
+    print("\nProgram finished successfully!")
+    print("-" * 50)
+
+# Unit testing
+import unittest
+
+class TestMathFunctions(unittest.TestCase):
+    def test_fibonacci(self):
+        self.assertEqual(fibonacci(0), 0)
+        self.assertEqual(fibonacci(1), 1)
+        self.assertEqual(fibonacci(10), 55)
+    
+    def test_factorial(self):
+        self.assertEqual(factorial(0), 1)
+        self.assertEqual(factorial(1), 1)
+        self.assertEqual(factorial(5), 120)
+    
+    def test_is_prime(self):
+        self.assertTrue(is_prime(2))
+        self.assertTrue(is_prime(17))
+        self.assertFalse(is_prime(1))
+        self.assertFalse(is_prime(4))
+        self.assertFalse(is_prime(9))
+    
+    def test_binary_search(self):
+        arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertEqual(binary_search(arr, 5), 4)
+        self.assertEqual(binary_search(arr, 1), 0)
+        self.assertEqual(binary_search(arr, 10), 9)
+        self.assertEqual(binary_search(arr, 11), -1)
+
+class TestStringFunctions(unittest.TestCase):
+    def test_reverse_string(self):
+        self.assertEqual(reverse_string("hello"), "olleh")
+        self.assertEqual(reverse_string(""), "")
+        self.assertEqual(reverse_string("a"), "a")
+    
+    def test_is_palindrome(self):
+        self.assertTrue(is_palindrome("racecar"))
+        self.assertTrue(is_palindrome("A man a plan a canal Panama"))
+        self.assertFalse(is_palindrome("hello"))
+        self.assertTrue(is_palindrome(""))
+
+class TestDataStructures(unittest.TestCase):
+    def test_stack(self):
+        stack = Stack()
+        self.assertTrue(stack.is_empty())
+        stack.push(1)
+        stack.push(2)
+        self.assertEqual(stack.size(), 2)
+        self.assertEqual(stack.peek(), 2)
+        self.assertEqual(stack.pop(), 2)
+        self.assertEqual(stack.pop(), 1)
+        self.assertTrue(stack.is_empty())
+    
+    def test_queue(self):
+        queue = Queue()
+        self.assertTrue(queue.is_empty())
+        queue.enqueue(1)
+        queue.enqueue(2)
+        self.assertEqual(queue.size(), 2)
+        self.assertEqual(queue.dequeue(), 1)
+        self.assertEqual(queue.dequeue(), 2)
+        self.assertTrue(queue.is_empty())
+
+def run_tests():
+    """Run all unit tests."""
+    unittest.main(argv=[''], verbosity=2, exit=False)
+
+# Command-line interface
+import argparse
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Python Examples Program')
+    parser.add_argument('--test', action='store_true', help='Run unit tests')
+    parser.add_argument('--fib', type=int, help='Calculate Fibonacci number')
+    parser.add_argument('--fact', type=int, help='Calculate factorial')
+    parser.add_argument('--prime', type=int, help='Check if number is prime')
+    return parser.parse_args()
+
+# Final comprehensive example
+class DataProcessor:
+    """Process and analyze data."""
+    
+    def __init__(self, data):
+        self.data = data
+        self.processed = False
+    
+    def clean_data(self):
+        """Clean the data by removing null values."""
+        # Remove rows with any NaN values
+        self.data = self.data.dropna()
+        return self
+    
+    def normalize(self):
+        """Normalize numerical columns."""
+        numeric_cols = self.data.select_dtypes(include=[int, float]).columns
+        for col in numeric_cols:
+            mean = self.data[col].mean()
+            std = self.data[col].std()
+            if std != 0:
+                self.data[col] = (self.data[col] - mean) / std
+        return self
+    
+    def encode_categorical(self):
+        """Encode categorical variables."""
+        categorical_cols = self.data.select_dtypes(include=[object]).columns
+        for col in categorical_cols:
+            dummies = pd.get_dummies(self.data[col], prefix=col)
+            self.data = pd.concat([self.data, dummies], axis=1)
+            self.data = self.data.drop(col, axis=1)
+        return self
+    
+    def process(self):
+        """Main processing pipeline."""
+        self.clean_data().normalize().encode_categorical()
+        self.processed = True
+        return self.data
+    
+    def export(self, filename: str):
+        """Export processed data to CSV."""
+        if not self.processed:
+            raise ValueError("Data not processed yet!")
+        self.data.to_csv(filename, index=False)
+        print(f"Data exported to {filename}")
+
+# If this script is run directly, execute main()
+if __name__ == "__main__":
+    args = parse_arguments()
+    
+    if args.test:
+        print("Running unit tests...")
+        run_tests()
+    elif args.fib:
+        print(f"Fibonacci({args.fib}) = {fibonacci(args.fib)}")
+    elif args.fact:
+        print(f"Factorial({args.fact}) = {factorial(args.fact)}")
+    elif args.prime:
+        result = "is prime" if is_prime(args.prime) else "is not prime"
+        print(f"{args.prime} {result}")
+    else:
+        main()
+    
+    print("\nProgram execution completed!")
+
+    # Python Code Examples
+
+def fibonacci(n):
+    """Return the nth Fibonacci number."""
+    if n <= 1:
+        return n
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+
+def factorial(n):
+    """Calculate factorial recursively."""
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
+
+def is_prime(num):
+    """Check if a number is prime."""
+    if num <= 1:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+def binary_search(arr, target):
+    """Binary search implementation."""
+    low, high = 0, len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+def bubble_sort(arr):
+    """Bubble sort implementation."""
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+def quick_sort(arr):
+    """Quick sort implementation."""
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+
+class Rectangle:
+    """A simple rectangle class."""
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+    
+    def area(self):
+        return self.width * self.height
+    
+    def perimeter(self):
+        return 2 * (self.width + self.height)
+    
+    def __str__(self):
+        return f"Rectangle({self.width}x{self.height})"
+    
+    def __repr__(self):
+        return f"Rectangle(width={self.width}, height={self.height})"
+
+class Stack:
+    """Stack implementation using list."""
+    def __init__(self):
+        self.items = []
+    
+    def push(self, item):
+        self.items.append(item)
+    
+    def pop(self):
+        if not self.is_empty():
+            return self.items.pop()
+        return None
+    
+    def peek(self):
+        if not self.is_empty():
+            return self.items[-1]
+        return None
+    
+    def is_empty(self):
+        return len(self.items) == 0
+    
+    def size(self):
+        return len(self.items)
+
+class Queue:
+    """Queue implementation using deque."""
+    from collections import deque
+    
+    def __init__(self):
+        self.items = deque()
+    
+    def enqueue(self, item):
+        self.items.append(item)
+    
+    def dequeue(self):
+        if not self.is_empty():
+            return self.items.popleft()
+        return None
+    
+    def is_empty(self):
+        return len(self.items) == 0
+    
+    def size(self):
+        return len(self.items)
+
+def read_file(filename):
+    """Read a file safely."""
+    try:
+        with open(filename, 'r') as file:
+            return file.read()
+    except FileNotFoundError:
+        print(f"File {filename} not found!")
+        return None
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        return None
+
+def write_file(filename, content):
+    """Write content to a file."""
+    try:
+        with open(filename, 'w') as file:
+            file.write(content)
+        return True
+    except Exception as e:
+        print(f"Error writing file: {e}")
+        return False
+
+def count_words(text):
+    """Count words in a string."""
+    words = text.split()
+    return len(words)
+
+def find_max(numbers):
+    """Find maximum value in a list."""
+    if not numbers:
+        return None
+    max_val = numbers[0]
+    for num in numbers[1:]:
+        if num > max_val:
+            max_val = num
+    return max_val
+
+def find_min(numbers):
+    """Find minimum value in a list."""
+    if not numbers:
+        return None
+    min_val = numbers[0]
+    for num in numbers[1:]:
+        if num < min_val:
+            min_val = num
+    return min_val
+
+def calculate_average(numbers):
+    """Calculate average of numbers."""
+    if not numbers:
+        return None
+    return sum(numbers) / len(numbers)
+
+def reverse_string(s):
+    """Reverse a string."""
+    return s[::-1]
+
+def is_palindrome(s):
+    """Check if a string is a palindrome."""
+    s = s.lower().replace(" ", "")
+    return s == s[::-1]
+
+def remove_duplicates(lst):
+    """Remove duplicates from a list."""
+    seen = set()
+    result = []
+    for item in lst:
+        if item not in seen:
+            seen.add(item)
+            result.append(item)
+    return result
+
+def flatten_list(nested_list):
+    """Flatten a nested list."""
+    result = []
+    for item in nested_list:
+        if isinstance(item, list):
+            result.extend(flatten_list(item))
+        else:
+            result.append(item)
+    return result
+
+def merge_dicts(dict1, dict2):
+    """Merge two dictionaries."""
+    result = dict1.copy()
+    result.update(dict2)
+    return result
+
+def deep_copy_dict(d):
+    """Create a deep copy of a dictionary."""
+    import copy
+    return copy.deepcopy(d)
+
+# List comprehensions
+squares = [x**2 for x in range(10)]
+even_numbers = [x for x in range(20) if x % 2 == 0]
+odd_squares = [x**2 for x in range(10) if x % 2 == 1]
+
+# Dictionary comprehensions
+square_dict = {x: x**2 for x in range(5)}
+word_lengths = {word: len(word) for word in ["hello", "world", "python"]}
+number_types = {x: "even" if x % 2 == 0 else "odd" for x in range(10)}
+
+# Set operations
+set_a = {1, 2, 3, 4, 5}
+set_b = {4, 5, 6, 7, 8}
+union = set_a | set_b
+intersection = set_a & set_b
+difference = set_a - set_b
+symmetric_difference = set_a ^ set_b
+
+# Lambda functions
+add = lambda x, y: x + y
+multiply = lambda x, y: x * y
+square = lambda x: x ** 2
+is_even = lambda x: x % 2 == 0
+
+# Map, filter, reduce
+numbers = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x**2, numbers))
+evens = list(filter(lambda x: x % 2 == 0, numbers))
+
+from functools import reduce
+product = reduce(lambda x, y: x * y, numbers)
+sum_all = reduce(lambda x, y: x + y, numbers)
+
+# Decorators
+def timer_decorator(func):
+    import time
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} took {end - start:.2f} seconds")
+        return result
+    return wrapper
+
+def debug_decorator(func):
+    def wrapper(*args, **kwargs):
+        print(f"Calling {func.__name__} with args: {args}, kwargs: {kwargs}")
+        result = func(*args, **kwargs)
+        print(f"{func.__name__} returned: {result}")
+        return result
+    return wrapper
+
+def cache_decorator(func):
+    cache = {}
+    def wrapper(*args):
+        if args in cache:
+            return cache[args]
+        result = func(*args)
+        cache[args] = result
+        return result
+    return wrapper
+
+@timer_decorator
+def slow_function():
+    import time
+    time.sleep(1)
+    return "Done"
+
+# Generators
+def count_up_to(n):
+    count = 1
+    while count <= n:
+        yield count
+        count += 1
+
+def fibonacci_generator(n):
+    a, b = 0, 1
+    count = 0
+    while count < n:
+        yield a
+        a, b = b, a + b
+        count += 1
+
+def read_large_file(filename):
+    """Read large file line by line using generator."""
+    with open(filename, 'r') as file:
+        for line in file:
+            yield line.strip()
+
+# Context managers
+class FileManager:
+    def __init__(self, filename, mode):
+        self.filename = filename
+        self.mode = mode
+        self.file = None
+    
+    def __enter__(self):
+        self.file = open(self.filename, self.mode)
+        return self.file
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.file:
+            self.file.close()
+
+class Timer:
+    def __enter__(self):
+        import time
+        self.start = time.time()
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        import time
+        self.end = time.time()
+        print(f"Time elapsed: {self.end - self.start:.2f} seconds")
+
+# Regular expressions
+import re
+
+def extract_emails(text):
+    pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    return re.findall(pattern, text)
+
+def extract_phone_numbers(text):
+    pattern = r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b'
+    return re.findall(pattern, text)
+
+def find_urls(text):
+    pattern = r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+'
+    return re.findall(pattern, text)
+
+# Sorting
+students = [
+    {"name": "Alice", "grade": 90},
+    {"name": "Bob", "grade": 85},
+    {"name": "Charlie", "grade": 95}
+]
+
+sorted_students = sorted(students, key=lambda x: x["grade"], reverse=True)
+sorted_by_name = sorted(students, key=lambda x: x["name"])
+
+# Type hints
+from typing import List, Dict, Optional, Union, Tuple, Any, Callable
+
+def process_items(items: List[str]) -> Dict[str, int]:
+    result = {}
+    for item in items:
+        result[item] = len(item)
+    return result
+
+def get_user(id: int) -> Optional[Dict]:
+    users = {1: {"name": "Alice"}, 2: {"name": "Bob"}}
+    return users.get(id)
+
+def divide_numbers(a: float, b: float) -> Union[float, str]:
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return "Cannot divide by zero!"
+
+def apply_function(func: Callable[[int], int], value: int) -> int:
+    return func(value)
+
+# Error handling with specific exceptions
+def safe_divide(a: float, b: float) -> Union[float, str]:
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        return "Error: Division by zero"
+    except TypeError:
+        return "Error: Invalid input types"
+    except Exception as e:
+        return f"Unexpected error: {e}"
+    else:
+        return result
+
+def read_config_file(filename: str) -> Dict:
+    import json
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Config file {filename} not found")
+        return {}
+    except json.JSONDecodeError:
+        print(f"Invalid JSON in {filename}")
+        return {}
+    finally:
+        print(f"Attempted to read {filename}")
+
+# Async functions
+import asyncio
+
+async def fetch_data(url: str) -> str:
+    await asyncio.sleep(1)  # Simulate network delay
+    return f"Data from {url}"
+
+async def process_items_async(items: List[str]) -> List[str]:
+    tasks = [fetch_data(item) for item in items]
+    return await asyncio.gather(*tasks)
+
+async def main_async():
+    urls = ["api/user/1", "api/user/2", "api/user/3"]
+    results = await process_items_async(urls)
+    return results
+
+# Data classes
+from dataclasses import dataclass, field
+from typing import List
+
+@dataclass
+class Person:
+    name: str
+    age: int
+    email: Optional[str] = None
+    
+    def is_adult(self) -> bool:
+        return self.age >= 18
+    
+    def greet(self) -> str:
+        return f"Hello, my name is {self.name}"
+
+@dataclass
+class Student(Person):
+    student_id: str
+    courses: List[str] = field(default_factory=list)
+    
+    def enroll(self, course: str):
+        self.courses.append(course)
+    
+    def get_courses(self) -> List[str]:
+        return self.courses
+
+# Enums
+from enum import Enum, auto
+
+class Color(Enum):
+    RED = auto()
+    GREEN = auto()
+    BLUE = auto()
+    YELLOW = auto()
+
+class Status(Enum):
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+def process_status(status: Status):
+    if status == Status.PENDING:
+        print("Task is pending")
+    elif status == Status.COMPLETED:
+        print("Task completed successfully")
+
+# JSON handling
+import json
+
+def save_to_json(data: Any, filename: str) -> bool:
+    try:
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving JSON: {e}")
+        return False
+
+def load_from_json(filename: str) -> Any:
+    try:
+        with open(filename, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading JSON: {e}")
+        return None
+
+# CSV handling
+import csv
+
+def read_csv(filename: str) -> List[Dict]:
+    data = []
+    try:
+        with open(filename, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                data.append(row)
+    except FileNotFoundError:
+        print(f"File {filename} not found")
+    except Exception as e:
+        print(f"Error reading CSV: {e}")
+    return data
+
+def write_csv(filename: str, data: List[Dict], fieldnames: List[str]) -> bool:
+    try:
+        with open(filename, 'w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(data)
+        return True
+    except Exception as e:
+        print(f"Error writing CSV: {e}")
+        return False
+
+# Math operations
+import math
+
+def circle_area(radius: float) -> float:
+    return math.pi * radius ** 2
+
+def circle_circumference(radius: float) -> float:
+    return 2 * math.pi * radius
+
+def distance(x1: float, y1: float, x2: float, y2: float) -> float:
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+def quadratic_formula(a: float, b: float, c: float) -> Tuple[Optional[float], Optional[float]]:
+    discriminant = b**2 - 4*a*c
+    if discriminant < 0:
+        return None, None
+    sqrt_disc = math.sqrt(discriminant)
+    root1 = (-b + sqrt_disc) / (2*a)
+    root2 = (-b - sqrt_disc) / (2*a)
+    return root1, root2
+
+# Random numbers
+import random
+
+def random_list(length: int, min_val: int = 0, max_val: int = 100) -> List[int]:
+    return [random.randint(min_val, max_val) for _ in range(length)]
+
+def shuffle_list(items: List[Any]) -> List[Any]:
+    shuffled = items.copy()
+    random.shuffle(shuffled)
+    return shuffled
+
+def random_choice_weighted(items: List[Any], weights: List[float]) -> Any:
+    return random.choices(items, weights=weights, k=1)[0]
+
+# Datetime operations
+from datetime import datetime, timedelta, date
+
+def get_current_time() -> datetime:
+    return datetime.now()
+
+def format_datetime(dt: datetime, fmt: str = "%Y-%m-%d %H:%M:%S") -> str:
+    return dt.strftime(fmt)
+
+def add_days_to_date(start_date: date, days: int) -> date:
+    return start_date + timedelta(days=days)
+
+def days_between(date1: date, date2: date) -> int:
+    return abs((date2 - date1).days)
+
+def is_leap_year(year: int) -> bool:
+    return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+
+# String manipulation
+def count_vowels(s: str) -> int:
+    vowels = "aeiouAEIOU"
+    return sum(1 for char in s if char in vowels)
+
+def count_consonants(s: str) -> int:
+    vowels = "aeiouAEIOU"
+    return sum(1 for char in s if char.isalpha() and char not in vowels)
+
+def capitalize_words(s: str) -> str:
+    return ' '.join(word.capitalize() for word in s.split())
+
+def remove_punctuation(s: str) -> str:
+    import string
+    return s.translate(str.maketrans('', '', string.punctuation))
+
+def find_substring_indices(s: str, substring: str) -> List[int]:
+    indices = []
+    start = 0
+    while True:
+        index = s.find(substring, start)
+        if index == -1:
+            break
+        indices.append(index)
+        start = index + 1
+    return indices
+
+# File path operations
+import os
+from pathlib import Path
+
+def list_files(directory: str, extension: Optional[str] = None) -> List[str]:
+    files = []
+    for file in os.listdir(directory):
+        filepath = os.path.join(directory, file)
+        if os.path.isfile(filepath):
+            if extension and not file.endswith(extension):
+                continue
+            files.append(file)
+    return files
+
+def list_files_recursive(directory: str, extension: Optional[str] = None) -> List[str]:
+    file_list = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if extension and not file.endswith(extension):
+                continue
+            file_list.append(os.path.join(root, file))
+    return file_list
+
+def create_directory(path: str) -> bool:
+    try:
+        os.makedirs(path, exist_ok=True)
+        return True
+    except Exception as e:
+        print(f"Error creating directory: {e}")
+        return False
+
+def get_file_size(filename: str) -> Optional[int]:
+    try:
+        return os.path.getsize(filename)
+    except OSError:
+        return None
+
+# Main function pattern
+def main():
+    """Main entry point of the program."""
+    print("Starting Python Examples Program...")
+    print("-" * 50)
+    
+    # Demonstrate various functions
+    n = 10
+    print(f"Fibonacci({n}) = {fibonacci(n)}")
+    print(f"Factorial({n}) = {factorial(n)}")
+    
+    # Test prime numbers
+    primes = [x for x in range(2, 20) if is_prime(x)]
+    print(f"Primes under 20: {primes}")
+    
+    # Use Rectangle class
+    rect = Rectangle(5, 10)
+    print(f"Rectangle: {rect}")
+    print(f"Area: {rect.area()}")
+    print(f"Perimeter: {rect.perimeter()}")
+    
+    # List comprehensions
+    print(f"\nSquares: {squares}")
+    print(f"Even numbers: {even_numbers}")
+    
+    # String operations
+    test_string = "A man a plan a canal Panama"
+    print(f"\nString: '{test_string}'")
+    print(f"Is palindrome? {is_palindrome(test_string)}")
+    print(f"Reversed: {reverse_string(test_string)}")
+    
+    # Sorting example
+    print(f"\nStudents sorted by grade:")
+    for student in sorted_students:
+        print(f"  {student['name']}: {student['grade']}")
+    
+    print("\nProgram finished successfully!")
+    print("-" * 50)
+
+# Unit testing
+import unittest
+
+class TestMathFunctions(unittest.TestCase):
+    def test_fibonacci(self):
+        self.assertEqual(fibonacci(0), 0)
+        self.assertEqual(fibonacci(1), 1)
+        self.assertEqual(fibonacci(10), 55)
+    
+    def test_factorial(self):
+        self.assertEqual(factorial(0), 1)
+        self.assertEqual(factorial(1), 1)
+        self.assertEqual(factorial(5), 120)
+    
+    def test_is_prime(self):
+        self.assertTrue(is_prime(2))
+        self.assertTrue(is_prime(17))
+        self.assertFalse(is_prime(1))
+        self.assertFalse(is_prime(4))
+        self.assertFalse(is_prime(9))
+    
+    def test_binary_search(self):
+        arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertEqual(binary_search(arr, 5), 4)
+        self.assertEqual(binary_search(arr, 1), 0)
+        self.assertEqual(binary_search(arr, 10), 9)
+        self.assertEqual(binary_search(arr, 11), -1)
+
+class TestStringFunctions(unittest.TestCase):
+    def test_reverse_string(self):
+        self.assertEqual(reverse_string("hello"), "olleh")
+        self.assertEqual(reverse_string(""), "")
+        self.assertEqual(reverse_string("a"), "a")
+    
+    def test_is_palindrome(self):
+        self.assertTrue(is_palindrome("racecar"))
+        self.assertTrue(is_palindrome("A man a plan a canal Panama"))
+        self.assertFalse(is_palindrome("hello"))
+        self.assertTrue(is_palindrome(""))
+
+class TestDataStructures(unittest.TestCase):
+    def test_stack(self):
+        stack = Stack()
+        self.assertTrue(stack.is_empty())
+        stack.push(1)
+        stack.push(2)
+        self.assertEqual(stack.size(), 2)
+        self.assertEqual(stack.peek(), 2)
+        self.assertEqual(stack.pop(), 2)
+        self.assertEqual(stack.pop(), 1)
+        self.assertTrue(stack.is_empty())
+    
+    def test_queue(self):
+        queue = Queue()
+        self.assertTrue(queue.is_empty())
+        queue.enqueue(1)
+        queue.enqueue(2)
+        self.assertEqual(queue.size(), 2)
+        self.assertEqual(queue.dequeue(), 1)
+        self.assertEqual(queue.dequeue(), 2)
+        self.assertTrue(queue.is_empty())
+
+def run_tests():
+    """Run all unit tests."""
+    unittest.main(argv=[''], verbosity=2, exit=False)
+
+# Command-line interface
+import argparse
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Python Examples Program')
+    parser.add_argument('--test', action='store_true', help='Run unit tests')
+    parser.add_argument('--fib', type=int, help='Calculate Fibonacci number')
+    parser.add_argument('--fact', type=int, help='Calculate factorial')
+    parser.add_argument('--prime', type=int, help='Check if number is prime')
+    return parser.parse_args()
+
+# Final comprehensive example
+class DataProcessor:
+    """Process and analyze data."""
+    
+    def __init__(self, data):
+        self.data = data
+        self.processed = False
+    
+    def clean_data(self):
+        """Clean the data by removing null values."""
+        # Remove rows with any NaN values
+        self.data = self.data.dropna()
+        return self
+    
+    def normalize(self):
+        """Normalize numerical columns."""
+        numeric_cols = self.data.select_dtypes(include=[int, float]).columns
+        for col in numeric_cols:
+            mean = self.data[col].mean()
+            std = self.data[col].std()
+            if std != 0:
+                self.data[col] = (self.data[col] - mean) / std
+        return self
+    
+    def encode_categorical(self):
+        """Encode categorical variables."""
+        categorical_cols = self.data.select_dtypes(include=[object]).columns
+        for col in categorical_cols:
+            dummies = pd.get_dummies(self.data[col], prefix=col)
+            self.data = pd.concat([self.data, dummies], axis=1)
+            self.data = self.data.drop(col, axis=1)
+        return self
+    
+    def process(self):
+        """Main processing pipeline."""
+        self.clean_data().normalize().encode_categorical()
+        self.processed = True
+        return self.data
+    
+    def export(self, filename: str):
+        """Export processed data to CSV."""
+        if not self.processed:
+            raise ValueError("Data not processed yet!")
+        self.data.to_csv(filename, index=False)
+        print(f"Data exported to {filename}")
+
+# If this script is run directly, execute main()
+if __name__ == "__main__":
+    args = parse_arguments()
+    
+    if args.test:
+        print("Running unit tests...")
+        run_tests()
+    elif args.fib:
+        print(f"Fibonacci({args.fib}) = {fibonacci(args.fib)}")
+    elif args.fact:
+        print(f"Factorial({args.fact}) = {factorial(args.fact)}")
+    elif args.prime:
+        result = "is prime" if is_prime(args.prime) else "is not prime"
+        print(f"{args.prime} {result}")
+    else:
+        main()
+    
+    print("\nProgram execution completed!")
+
+    # Web scraping example
+import requests
+from bs4 import BeautifulSoup
+
+def scrape_website(url):
+    """Scrape website content."""
+    try:
+        response = requests.get(url, timeout=5)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        return soup.prettify()
+    except requests.RequestException as e:
+        return f"Error: {e}"
+
+# Database operations
+import sqlite3
+
+def create_database(db_name):
+    """Create SQLite database."""
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users
+                     (id INTEGER PRIMARY KEY, name TEXT, email TEXT)''')
+    conn.commit()
+    conn.close()
+
+def insert_user(db_name, name, email):
+    """Insert user into database."""
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO users (name, email) VALUES (?, ?)", (name, email))
+    conn.commit()
+    conn.close()
+
+def get_users(db_name):
+    """Retrieve all users from database."""
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+    conn.close()
+    return users
+
+# List operations
+def flatten_nested_list(nested):
+    """Flatten a deeply nested list."""
+    result = []
+    for item in nested:
+        if isinstance(item, list):
+            result.extend(flatten_nested_list(item))
+        else:
+            result.append(item)
+    return result
+
+def chunk_list(lst, chunk_size):
+    """Split list into chunks."""
+    return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
+
+def zip_lists(*lists):
+    """Zip multiple lists together."""
+    return list(zip(*lists))
+
+# Dictionary operations
+def merge_dicts_recursive(dict1, dict2):
+    """Recursively merge two dictionaries."""
+    result = dict1.copy()
+    for key, value in dict2.items():
+        if key in result and isinstance(result[key], dict):
+            result[key] = merge_dicts_recursive(result[key], value)
+        else:
+            result[key] = value
+    return result
+
+def invert_dict(d):
+    """Invert dictionary keys and values."""
+    return {v: k for k, v in d.items()}
+
+def filter_dict(d, predicate):
+    """Filter dictionary by predicate function."""
+    return {k: v for k, v in d.items() if predicate(k, v)}
+
+# String operations
+def longest_common_substring(s1, s2):
+    """Find longest common substring."""
+    if not s1 or not s2:
+        return ""
+    
+    matches = []
+    for i in range(len(s1)):
+        for j in range(len(s2)):
+            k = 0
+            while (i + k < len(s1) and j + k < len(s2) and 
+                   s1[i + k] == s2[j + k]):
+                k += 1
+            if k > 0:
+                matches.append(s1[i:i + k])
+    
+    return max(matches, key=len) if matches else ""
+
+def edit_distance(s1, s2):
+    """Calculate edit distance (Levenshtein distance)."""
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    for i in range(m + 1):
+        dp[i][0] = i
+    for j in range(n + 1):
+        dp[0][j] = j
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if s1[i - 1] == s2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+    
+    return dp[m][n]
+
+# Tree structures
+class TreeNode:
+    """Binary tree node."""
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def tree_traversal_inorder(node):
+    """In-order traversal of binary tree."""
+    if not node:
+        return []
+    return tree_traversal_inorder(node.left) + [node.val] + tree_traversal_inorder(node.right)
+
+def tree_traversal_preorder(node):
+    """Pre-order traversal of binary tree."""
+    if not node:
+        return []
+    return [node.val] + tree_traversal_preorder(node.left) + tree_traversal_preorder(node.right)
+
+def tree_height(node):
+    """Calculate height of binary tree."""
+    if not node:
+        return 0
+    return 1 + max(tree_height(node.left), tree_height(node.right))
+
+# Graph structures
+class Graph:
+    """Graph representation using adjacency list."""
+    def __init__(self):
+        self.graph = {}
+    
+    def add_edge(self, u, v):
+        """Add edge between vertices."""
+        if u not in self.graph:
+            self.graph[u] = []
+        self.graph[u].append(v)
+    
+    def dfs(self, start, visited=None):
+        """Depth-first search."""
+        if visited is None:
+            visited = set()
+        visited.add(start)
+        result = [start]
+        for neighbor in self.graph.get(start, []):
+            if neighbor not in visited:
+                result.extend(self.dfs(neighbor, visited))
+        return result
+    
+    def bfs(self, start):
+        """Breadth-first search."""
+        from collections import deque
+        visited = set([start])
+        queue = deque([start])
+        result = []
+        while queue:
+            vertex = queue.popleft()
+            result.append(vertex)
+            for neighbor in self.graph.get(vertex, []):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        return result
+
+# Sorting algorithms
+def merge_sort(arr):
+    """Merge sort implementation."""
+    if len(arr) <= 1:
+        return arr
+    
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    
+    return merge(left, right)
+
+def merge(left, right):
+    """Merge two sorted lists."""
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+def heap_sort(arr):
+    """Heap sort implementation."""
+    def heapify(arr, n, i):
+        largest = i
+        left = 2 * i + 1
+        right = 2 * i + 2
+        
+        if left < n and arr[left] > arr[largest]:
+            largest = left
+        if right < n and arr[right] > arr[largest]:
+            largest = right
+        
+        if largest != i:
+            arr[i], arr[largest] = arr[largest], arr[i]
+            heapify(arr, n, largest)
+    
+    n = len(arr)
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(arr, i, 0)
+    
+    return arr
+
+# Dynamic programming
+def fibonacci_dp(n):
+    """Fibonacci using dynamic programming."""
+    if n <= 1:
+        return n
+    dp = [0] * (n + 1)
+    dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    return dp[n]
+
+def longest_increasing_subsequence(arr):
+    """Find longest increasing subsequence."""
+    n = len(arr)
+    if n == 0:
+        return []
+    dp = [1] * n
+    parent = [-1] * n
+    
+    for i in range(1, n):
+        for j in range(i):
+            if arr[j] < arr[i] and dp[j] + 1 > dp[i]:
+                dp[i] = dp[j] + 1
+                parent[i] = j
+    
+    max_idx = dp.index(max(dp))
+    lis = []
+    idx = max_idx
+    while idx != -1:
+        lis.append(arr[idx])
+        idx = parent[idx]
+    return lis[::-1]
+
+# Bit manipulation
+def count_bits(n):
+    """Count number of set bits."""
+    count = 0
+    while n:
+        count += n & 1
+        n >>= 1
+    return count
+
+def is_power_of_two(n):
+    """Check if number is power of two."""
+    return n > 0 and (n & (n - 1)) == 0
+
+def xor_all(arr):
+    """XOR all elements in array."""
+    result = 0
+    for num in arr:
+        result ^= num
+    return result
+
+    # Web scraping example
+import requests
+from bs4 import BeautifulSoup
+
+def scrape_website(url):
+    """Scrape website content."""
+    try:
+        response = requests.get(url, timeout=5)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        return soup.prettify()
+    except requests.RequestException as e:
+        return f"Error: {e}"
+
+# Database operations
+import sqlite3
+
+def create_database(db_name):
+    """Create SQLite database."""
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users
+                     (id INTEGER PRIMARY KEY, name TEXT, email TEXT)''')
+    conn.commit()
+    conn.close()
+
+def insert_user(db_name, name, email):
+    """Insert user into database."""
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO users (name, email) VALUES (?, ?)", (name, email))
+    conn.commit()
+    conn.close()
+
+def get_users(db_name):
+    """Retrieve all users from database."""
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+    conn.close()
+    return users
+
+# List operations
+def flatten_nested_list(nested):
+    """Flatten a deeply nested list."""
+    result = []
+    for item in nested:
+        if isinstance(item, list):
+            result.extend(flatten_nested_list(item))
+        else:
+            result.append(item)
+    return result
+
+def chunk_list(lst, chunk_size):
+    """Split list into chunks."""
+    return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
+
+def zip_lists(*lists):
+    """Zip multiple lists together."""
+    return list(zip(*lists))
+
+# Dictionary operations
+def merge_dicts_recursive(dict1, dict2):
+    """Recursively merge two dictionaries."""
+    result = dict1.copy()
+    for key, value in dict2.items():
+        if key in result and isinstance(result[key], dict):
+            result[key] = merge_dicts_recursive(result[key], value)
+        else:
+            result[key] = value
+    return result
+
+def invert_dict(d):
+    """Invert dictionary keys and values."""
+    return {v: k for k, v in d.items()}
+
+def filter_dict(d, predicate):
+    """Filter dictionary by predicate function."""
+    return {k: v for k, v in d.items() if predicate(k, v)}
+
+# String operations
+def longest_common_substring(s1, s2):
+    """Find longest common substring."""
+    if not s1 or not s2:
+        return ""
+    
+    matches = []
+    for i in range(len(s1)):
+        for j in range(len(s2)):
+            k = 0
+            while (i + k < len(s1) and j + k < len(s2) and 
+                   s1[i + k] == s2[j + k]):
+                k += 1
+            if k > 0:
+                matches.append(s1[i:i + k])
+    
+    return max(matches, key=len) if matches else ""
+
+def edit_distance(s1, s2):
+    """Calculate edit distance (Levenshtein distance)."""
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    for i in range(m + 1):
+        dp[i][0] = i
+    for j in range(n + 1):
+        dp[0][j] = j
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if s1[i - 1] == s2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+    
+    return dp[m][n]
+
+# Tree structures
+class TreeNode:
+    """Binary tree node."""
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def tree_traversal_inorder(node):
+    """In-order traversal of binary tree."""
+    if not node:
+        return []
+    return tree_traversal_inorder(node.left) + [node.val] + tree_traversal_inorder(node.right)
+
+def tree_traversal_preorder(node):
+    """Pre-order traversal of binary tree."""
+    if not node:
+        return []
+    return [node.val] + tree_traversal_preorder(node.left) + tree_traversal_preorder(node.right)
+
+def tree_height(node):
+    """Calculate height of binary tree."""
+    if not node:
+        return 0
+    return 1 + max(tree_height(node.left), tree_height(node.right))
+
+# Graph structures
+class Graph:
+    """Graph representation using adjacency list."""
+    def __init__(self):
+        self.graph = {}
+    
+    def add_edge(self, u, v):
+        """Add edge between vertices."""
+        if u not in self.graph:
+            self.graph[u] = []
+        self.graph[u].append(v)
+    
+    def dfs(self, start, visited=None):
+        """Depth-first search."""
+        if visited is None:
+            visited = set()
+        visited.add(start)
+        result = [start]
+        for neighbor in self.graph.get(start, []):
+            if neighbor not in visited:
+                result.extend(self.dfs(neighbor, visited))
+        return result
+    
+    def bfs(self, start):
+        """Breadth-first search."""
+        from collections import deque
+        visited = set([start])
+        queue = deque([start])
+        result = []
+        while queue:
+            vertex = queue.popleft()
+            result.append(vertex)
+            for neighbor in self.graph.get(vertex, []):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        return result
+
+# Sorting algorithms
+def merge_sort(arr):
+    """Merge sort implementation."""
+    if len(arr) <= 1:
+        return arr
+    
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    
+    return merge(left, right)
+
+def merge(left, right):
+    """Merge two sorted lists."""
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+def heap_sort(arr):
+    """Heap sort implementation."""
+    def heapify(arr, n, i):
+        largest = i
+        left = 2 * i + 1
+        right = 2 * i + 2
+        
+        if left < n and arr[left] > arr[largest]:
+            largest = left
+        if right < n and arr[right] > arr[largest]:
+            largest = right
+        
+        if largest != i:
+            arr[i], arr[largest] = arr[largest], arr[i]
+            heapify(arr, n, largest)
+    
+    n = len(arr)
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(arr, i, 0)
+    
+    return arr
+
+# Dynamic programming
+def fibonacci_dp(n):
+    """Fibonacci using dynamic programming."""
+    if n <= 1:
+        return n
+    dp = [0] * (n + 1)
+    dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    return dp[n]
+
+def longest_increasing_subsequence(arr):
+    """Find longest increasing subsequence."""
+    n = len(arr)
+    if n == 0:
+        return []
+    dp = [1] * n
+    parent = [-1] * n
+    
+    for i in range(1, n):
+        for j in range(i):
+            if arr[j] < arr[i] and dp[j] + 1 > dp[i]:
+                dp[i] = dp[j] + 1
+                parent[i] = j
+    
+    max_idx = dp.index(max(dp))
+    lis = []
+    idx = max_idx
+    while idx != -1:
+        lis.append(arr[idx])
+        idx = parent[idx]
+    return lis[::-1]
+
+# Bit manipulation
+def count_bits(n):
+    """Count number of set bits."""
+    count = 0
+    while n:
+        count += n & 1
+        n >>= 1
+    return count
+
+def is_power_of_two(n):
+    """Check if number is power of two."""
+    return n > 0 and (n & (n - 1)) == 0
+
+def xor_all(arr):
+    """XOR all elements in array."""
+    result = 0
+    for num in arr:
+        result ^= num
+    return result
+
+
+    # Web scraping example
+import requests
+from bs4 import BeautifulSoup
+
+def scrape_website(url):
+    """Scrape website content."""
+    try:
+        response = requests.get(url, timeout=5)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        return soup.prettify()
+    except requests.RequestException as e:
+        return f"Error: {e}"
+
+# Database operations
+import sqlite3
+
+def create_database(db_name):
+    """Create SQLite database."""
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users
+                     (id INTEGER PRIMARY KEY, name TEXT, email TEXT)''')
+    conn.commit()
+    conn.close()
+
+def insert_user(db_name, name, email):
+    """Insert user into database."""
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO users (name, email) VALUES (?, ?)", (name, email))
+    conn.commit()
+    conn.close()
+
+def get_users(db_name):
+    """Retrieve all users from database."""
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+    conn.close()
+    return users
+
+# List operations
+def flatten_nested_list(nested):
+    """Flatten a deeply nested list."""
+    result = []
+    for item in nested:
+        if isinstance(item, list):
+            result.extend(flatten_nested_list(item))
+        else:
+            result.append(item)
+    return result
+
+def chunk_list(lst, chunk_size):
+    """Split list into chunks."""
+    return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
+
+def zip_lists(*lists):
+    """Zip multiple lists together."""
+    return list(zip(*lists))
+
+# Dictionary operations
+def merge_dicts_recursive(dict1, dict2):
+    """Recursively merge two dictionaries."""
+    result = dict1.copy()
+    for key, value in dict2.items():
+        if key in result and isinstance(result[key], dict):
+            result[key] = merge_dicts_recursive(result[key], value)
+        else:
+            result[key] = value
+    return result
+
+def invert_dict(d):
+    """Invert dictionary keys and values."""
+    return {v: k for k, v in d.items()}
+
+def filter_dict(d, predicate):
+    """Filter dictionary by predicate function."""
+    return {k: v for k, v in d.items() if predicate(k, v)}
+
+# String operations
+def longest_common_substring(s1, s2):
+    """Find longest common substring."""
+    if not s1 or not s2:
+        return ""
+    
+    matches = []
+    for i in range(len(s1)):
+        for j in range(len(s2)):
+            k = 0
+            while (i + k < len(s1) and j + k < len(s2) and 
+                   s1[i + k] == s2[j + k]):
+                k += 1
+            if k > 0:
+                matches.append(s1[i:i + k])
+    
+    return max(matches, key=len) if matches else ""
+
+def edit_distance(s1, s2):
+    """Calculate edit distance (Levenshtein distance)."""
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    
+    for i in range(m + 1):
+        dp[i][0] = i
+    for j in range(n + 1):
+        dp[0][j] = j
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if s1[i - 1] == s2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                dp[i][j] = 1 + min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+    
+    return dp[m][n]
+
+# Tree structures
+class TreeNode:
+    """Binary tree node."""
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def tree_traversal_inorder(node):
+    """In-order traversal of binary tree."""
+    if not node:
+        return []
+    return tree_traversal_inorder(node.left) + [node.val] + tree_traversal_inorder(node.right)
+
+def tree_traversal_preorder(node):
+    """Pre-order traversal of binary tree."""
+    if not node:
+        return []
+    return [node.val] + tree_traversal_preorder(node.left) + tree_traversal_preorder(node.right)
+
+def tree_height(node):
+    """Calculate height of binary tree."""
+    if not node:
+        return 0
+    return 1 + max(tree_height(node.left), tree_height(node.right))
+
+# Graph structures
+class Graph:
+    """Graph representation using adjacency list."""
+    def __init__(self):
+        self.graph = {}
+    
+    def add_edge(self, u, v):
+        """Add edge between vertices."""
+        if u not in self.graph:
+            self.graph[u] = []
+        self.graph[u].append(v)
+    
+    def dfs(self, start, visited=None):
+        """Depth-first search."""
+        if visited is None:
+            visited = set()
+        visited.add(start)
+        result = [start]
+        for neighbor in self.graph.get(start, []):
+            if neighbor not in visited:
+                result.extend(self.dfs(neighbor, visited))
+        return result
+    
+    def bfs(self, start):
+        """Breadth-first search."""
+        from collections import deque
+        visited = set([start])
+        queue = deque([start])
+        result = []
+        while queue:
+            vertex = queue.popleft()
+            result.append(vertex)
+            for neighbor in self.graph.get(vertex, []):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        return result
+
+# Sorting algorithms
+def merge_sort(arr):
+    """Merge sort implementation."""
+    if len(arr) <= 1:
+        return arr
+    
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    
+    return merge(left, right)
+
+def merge(left, right):
+    """Merge two sorted lists."""
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+def heap_sort(arr):
+    """Heap sort implementation."""
+    def heapify(arr, n, i):
+        largest = i
+        left = 2 * i + 1
+        right = 2 * i + 2
+        
+        if left < n and arr[left] > arr[largest]:
+            largest = left
+        if right < n and arr[right] > arr[largest]:
+            largest = right
+        
+        if largest != i:
+            arr[i], arr[largest] = arr[largest], arr[i]
+            heapify(arr, n, largest)
+    
+    n = len(arr)
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(arr, i, 0)
+    
+    return arr
+
+# Dynamic programming
+def fibonacci_dp(n):
+    """Fibonacci using dynamic programming."""
+    if n <= 1:
+        return n
+    dp = [0] * (n + 1)
+    dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    return dp[n]
+
+def longest_increasing_subsequence(arr):
+    """Find longest increasing subsequence."""
+    n = len(arr)
+    if n == 0:
+        return []
+    dp = [1] * n
+    parent = [-1] * n
+    
+    for i in range(1, n):
+        for j in range(i):
+            if arr[j] < arr[i] and dp[j] + 1 > dp[i]:
+                dp[i] = dp[j] + 1
+                parent[i] = j
+    
+    max_idx = dp.index(max(dp))
+    lis = []
+    idx = max_idx
+    while idx != -1:
+        lis.append(arr[idx])
+        idx = parent[idx]
+    return lis[::-1]
+
+# Bit manipulation
+def count_bits(n):
+    """Count number of set bits."""
+    count = 0
+    while n:
+        count += n & 1
+        n >>= 1
+    return count
+
+def is_power_of_two(n):
+    """Check if number is power of two."""
+    return n > 0 and (n & (n - 1)) == 0
+
+def xor_all(arr):
+    """XOR all elements in array."""
+    result = 0
+    for num in arr:
+        result ^= num
+    return result
